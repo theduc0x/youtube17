@@ -1,4 +1,4 @@
-package com.example.youtubeapp.model.listvideorelated;
+package com.example.youtubeapp.model.searchyoutube;
 
 public class PageInfoRelated {
     public int totalResults;

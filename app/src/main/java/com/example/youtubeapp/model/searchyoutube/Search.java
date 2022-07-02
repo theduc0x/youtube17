@@ -1,15 +1,15 @@
-package com.example.youtubeapp.model.listvideorelated;
+package com.example.youtubeapp.model.searchyoutube;
 
 
 import java.util.ArrayList;
 
-public class RelatedVideo {
+public class Search {
     public String kind;
     public String etag;
     public String nextPageToken;
     public String regionCode;
     public PageInfoRelated pageInfo;
-    public ArrayList<ItemsRelated> items;
+    public ArrayList<ItemsSearch> items;
 
     public PageInfoRelated getPageInfo() {
         return pageInfo;
@@ -19,12 +19,12 @@ public class RelatedVideo {
         this.pageInfo = pageInfo;
     }
 
-    public ArrayList<ItemsRelated> getItems() {
+    public ArrayList<ItemsSearch> getItems() {
         return items;
     }
 
 
-    public void setItems(ArrayList<ItemsRelated> items) {
+    public void setItems(ArrayList<ItemsSearch> items) {
         this.items = items;
     }
 

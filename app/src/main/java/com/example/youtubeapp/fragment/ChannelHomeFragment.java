@@ -77,8 +77,9 @@ public class ChannelHomeFragment extends Fragment {
                     if (item == null) {
                         return;
                     }
-                        if (item.getBrandingSettings().getImage().getBannerExternalUrl() == null) {
-                            urlBanner = "https://i.ytimg.com/vi/0UDkE-PrV7s/hqdefault.jpg";
+                        if (item.getBrandingSettings().getImage() == null) {
+                            urlBanner =
+                                    "https://st.quantrimang.com/photos/image/2020/07/30/Hinh-Nen-Trang-10.jpg";
                         } else {
                             urlBanner = item.getBrandingSettings().getImage().getBannerExternalUrl();
                         }

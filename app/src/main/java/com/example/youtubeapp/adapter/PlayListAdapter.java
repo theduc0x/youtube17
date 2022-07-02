@@ -75,9 +75,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             viewHolder.llOpenPlayList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    playListListener.onCLickItemPlayList(
-                            item
-                    );
+                    playListListener.onCLickItemPlayList(item);
                 }
             });
 

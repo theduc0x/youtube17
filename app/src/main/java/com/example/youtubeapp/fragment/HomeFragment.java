@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.activitys.ChannelActivity;
+import com.example.youtubeapp.model.itemrecycleview.SearchItem;
+import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
 import com.example.youtubeapp.my_interface.PaginationScrollListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.model.infochannel.Channel;
@@ -55,7 +58,7 @@ public class HomeFragment extends Fragment {
         rvItemVideo = view.findViewById(R.id.rv_item_video);
 
         // Khi click vào các item video sẽ mở activity play để chạy video
-        adapter = new VideoYoutubeAdapter( new IItemOnClickVideoListener() {
+        adapter = new VideoYoutubeAdapter(new IItemOnClickVideoListener() {
             @Override
             public void OnClickItemVideo(VideoItem item) {
                 Intent toPlayVideo = new Intent(getActivity(), VideoPlayActivity.class);
@@ -63,6 +66,14 @@ public class HomeFragment extends Fragment {
                 bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
                 toPlayVideo.putExtras(bundle);
                 startActivity(toPlayVideo);
+            }
+        }, new IItemOnClickChannelListener() {
+            @Override
+            public void onClickOpenChannel(String idChannel, String titleChannel) {
+                Intent openToChannel = new Intent(getActivity(), ChannelActivity.class);
+                openToChannel.putExtra(Util.EXTRA_ID_CHANNEL_TO_CHANNEL, idChannel);
+                openToChannel.putExtra(Util.EXTRA_TITLE_CHANNEL_TO_CHANNEL, titleChannel);
+                startActivity(openToChannel);
             }
         });
 

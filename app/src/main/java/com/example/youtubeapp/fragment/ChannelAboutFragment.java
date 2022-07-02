@@ -89,13 +89,19 @@ public class ChannelAboutFragment extends Fragment {
                     } else {
                         customUrl = item.getSnippet().getCustomUrl();
                     }
-                    country = item.getSnippet().getCountry();
+                    if (item.getSnippet().getCountry() == null) {
+                        country = "";
+                        tvCountry.setVisibility(View.GONE);
+                    } else {
+                        country = item.getSnippet().getCountry();
+                        Locale l = new Locale("", country);
+                        String countryD = l.getDisplayCountry();
+                        tvCountry.setText(countryD);
+                    }
                     description = item.getSnippet().getDescription();
 
                     // chuyển đổi tên viết tắt sang tên đầy đủ
-                    Locale l = new Locale("", country);
-                    String countryD = l.getDisplayCountry();
-                    tvCountry.setText(countryD);
+
 
                     if (customUrl.equals("")) {
                         tvLinkYoutube.setText(getString(R.string.tv_link_url_youtube_1) + idChannel1);

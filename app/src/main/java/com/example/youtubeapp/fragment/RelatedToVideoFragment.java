@@ -21,8 +21,8 @@ import com.example.youtubeapp.api.ApiServicePlayList;
 import com.example.youtubeapp.model.infochannel.Channel;
 import com.example.youtubeapp.model.infochannel.Itemss;
 import com.example.youtubeapp.model.itemrecycleview.VideoItem;
-import com.example.youtubeapp.model.listvideorelated.ItemsRelated;
-import com.example.youtubeapp.model.listvideorelated.RelatedVideo;
+import com.example.youtubeapp.model.searchyoutube.ItemsSearch;
+import com.example.youtubeapp.model.searchyoutube.Search;
 import com.example.youtubeapp.my_interface.IItemOnClickVideoListener;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class RelatedToVideoFragment extends Fragment {
     VideoItem itemVideo;
     String idVideoRe = "";
     String pageTokenTo = "";
-    RelatedVideo relatedVideo;
+    Search search;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,24 +88,24 @@ public class RelatedToVideoFragment extends Fragment {
                 "video",
                 Util.API_KEY,
                 maxResults
-        ).enqueue(new Callback<RelatedVideo>() {
+        ).enqueue(new Callback<Search>() {
             @Override
-            public void onResponse(Call<RelatedVideo> call, Response<RelatedVideo> response) {
+            public void onResponse(Call<Search> call, Response<Search> response) {
                 Log.d("ssss", "Success");
                 Log.d("ssss", relatedIdVideo);
                 String urlThumbnailVideo = "", titleVideo = "", titleChannel = "",
                         timeVideo = "", viewCountVideo = "", commentCount = "",
                         idVideo = "", likeCountVideo = "", descVideo = "",
                         nextPageToken = "", idChannel = "", urlLogoChannel = "";
-                relatedVideo = response.body();
-                if (relatedVideo != null) {
-                    nextPageToken = relatedVideo.getNextPageToken();
+                search = response.body();
+                if (search != null) {
+                    nextPageToken = search.getNextPageToken();
                     if (nextPageToken.equals(pageTokenTo)) {
                         return;
                     }
                     pageTokenTo = nextPageToken;
                     int n = 0;
-                    ArrayList<ItemsRelated> listItem = relatedVideo.getItems();
+                    ArrayList<ItemsSearch> listItem = search.getItems();
                     for (int i = 0; i < listItem.size(); i++) {
 
                         if (listItem.get(i).getSnippet() == null) {
@@ -143,7 +143,7 @@ public class RelatedToVideoFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<RelatedVideo> call, Throwable t) {
+            public void onFailure(Call<Search> call, Throwable t) {
 
             }
         });

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.model.infochannel.Channel;
 import com.example.youtubeapp.model.itemrecycleview.ChannelItem;
+import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.squareup.picasso.Picasso;
 
@@ -23,6 +24,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ListChannelAdapter extends RecyclerView.Adapter<ListChannelAdapter.ListChannelViewHolder> {
     ArrayList<ChannelItem> listItems;
+    IItemOnClickChannelListener onClickChannelListener;
+
+    public ListChannelAdapter(IItemOnClickChannelListener onClickChannelListener) {
+        this.onClickChannelListener = onClickChannelListener;
+    }
+
     @NonNull
     @Override
     public ListChannelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,7 +57,7 @@ public class ListChannelAdapter extends RecyclerView.Adapter<ListChannelAdapter.
         holder.llOpenChannel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                onClickChannelListener.onClickOpenChannel(idChannel, item.getTitleChannel());
             }
         });
     }

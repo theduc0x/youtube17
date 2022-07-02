@@ -18,4 +18,10 @@
     <dimen name="height_50dp">50dp</dimen>
     <dimen name="textSize_15dp">15dp</dimen>
     <dimen name="textSize_12dp">12dp</dimen>
+    <dimen name="me_5dp">5dp</dimen>
+    <dimen name="ms_3dp">3dp</dimen>
+    <dimen name="height_20dp">20dp</dimen>
+    <dimen name="mt_15dp">15dp</dimen>
+    <dimen name="height_280dp">280dp</dimen>
+    <dimen name="width_180dp">180dp</dimen>
 </resources>

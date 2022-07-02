@@ -161,8 +161,8 @@ public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment 
         tvNameReceive.setText(itemR.getAuthorName());
         tvContentReceive.setText(itemR.getTextDisplay());
         tvDateDiffReceive.setText(" • " + Util.getTime(itemR.getPublishedAt()));
-        likeCountReceive.setText(Util.convertViewCount(itemR.getLikeCount()));
-        repliesCountReceive.setText(Util.convertViewCount(itemR.getTotalReplyCount()));
+        likeCountReceive.setText(Util.convertViewCount(Double.parseDouble(itemR.getLikeCount())));
+        repliesCountReceive.setText(Util.convertViewCount(Double.parseDouble(itemR.getTotalReplyCount())));
         if (publishAt.equals(updateAt)) {
             tvEditor.setVisibility(View.VISIBLE);
         }

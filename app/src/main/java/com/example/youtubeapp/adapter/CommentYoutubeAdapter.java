@@ -71,9 +71,9 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == VIEW_TYPE_ITEM) {
             CommentItem item = listItemCmt.get(position);
-//            if (item == null) {
-//                return;
-//            }
+            if (item == null) {
+                return;
+            }
             CommentViewHolder viewHolder = (CommentViewHolder) holder;
             viewHolder.setData(item);
             viewHolder.rlOpenReplies.setOnClickListener(new View.OnClickListener() {
@@ -117,28 +117,28 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @RequiresApi(api = Build.VERSION_CODES.O)
 
         void setData(CommentItem item) {
-            if (item == null) {
-                return ;
-            }
+//            if (item == null) {
+//                return ;
+//            }
             String authorLogoUrl = item.getAuthorLogoUrl();
             String authorName = item.getAuthorName();
             String publishedAt = item.getPublishedAt();
             String updateAt = item.getUpdateAt();
             String dateDiff = Util.getTime(publishedAt);
             String commentContent = item.getTextDisplay();
-            int likeCountCmt = item.getLikeCount();
-            int repliesCountCmt = item.getTotalReplyCount();
+            String likeCountCmt = item.getLikeCount();
+            String repliesCountCmt = item.getTotalReplyCount();
 
             Picasso.get().load(authorLogoUrl).into(civLogoAuthor);
             tvAuthorName.setText(authorName);
             tvCommentContent.setText(commentContent);
             tvDateDiff.setText(" • " + dateDiff);
-            tvLikeCountCmt.setText(Util.convertViewCount(likeCountCmt));
+            tvLikeCountCmt.setText(Util.convertViewCount(Double.parseDouble(likeCountCmt)));
             tvRepliesCount.setText(String.valueOf(repliesCountCmt));
             if (!publishedAt.equals(updateAt)) {
                 tvEditor.setVisibility(View.VISIBLE);
             }
-            if (repliesCountCmt > 0) {
+            if (Integer.valueOf(repliesCountCmt) > 0) {
                 btListReplies.setVisibility(View.VISIBLE);
                 btListReplies.setText(repliesCountCmt + " REPLIES");
             } else {
@@ -157,8 +157,7 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void addFooterLoading() {
         isLoadingAdd = true;
-        listItemCmt.add(new CommentItem("", "", "", "",
-                "", 0, "", "", 0, null));
+        listItemCmt.add(null);
     }
 
     public void removeFooterLoading() {

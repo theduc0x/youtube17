@@ -1,5 +1,6 @@
 package com.example.youtubeapp.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.activitys.ChannelActivity;
 import com.example.youtubeapp.adapter.ListChannelAdapter;
 import com.example.youtubeapp.api.ApiServicePlayList;
 import com.example.youtubeapp.model.infochannel.Channel;
@@ -22,6 +24,7 @@ import com.example.youtubeapp.model.infochannel.Itemss;
 import com.example.youtubeapp.model.itemrecycleview.ChannelItem;
 import com.example.youtubeapp.model.listchannelsfromchannel.ChannelsList;
 import com.example.youtubeapp.model.listchannelsfromchannel.Items;
+import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.squareup.picasso.Picasso;
 
@@ -52,7 +55,15 @@ public class ChannelChannelsFragment extends Fragment implements SwipeRefreshLay
         LinearLayoutManager linearLayoutManager =
                 new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rvChannelList.setLayoutManager(linearLayoutManager);
-        adapter = new ListChannelAdapter();
+        adapter = new ListChannelAdapter(new IItemOnClickChannelListener() {
+            @Override
+            public void onClickOpenChannel(String idChannel, String titleChannel) {
+                Intent openToChannel = new Intent(getActivity(), ChannelActivity.class);
+                openToChannel.putExtra(Util.EXTRA_ID_CHANNEL_TO_CHANNEL, idChannel);
+                openToChannel.putExtra(Util.EXTRA_TITLE_CHANNEL_TO_CHANNEL, titleChannel);
+                startActivity(openToChannel);
+            }
+        });
         rvChannelList.setAdapter(adapter);
         callApiGetListChannel(idChannel);
 

@@ -56,7 +56,7 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
 
     ArrayList<CommentItem> listCmtItem;
     ArrayList<CommentItem> listAdd;
-
+    private int LoadPage = 1;
     private String pageToken = "";
     private boolean isLoading;
     private boolean isLastPage;
@@ -146,6 +146,13 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
     }
 
     private void setDataComment() {
+        int cmtCountD = Integer.valueOf(cmtCount);
+        if (cmtCountD % 10 != 0) {
+            totalPage = (cmtCountD / 10) + 1;
+        } else {
+            totalPage = (cmtCountD / 10);
+        }
+
         tvTotalCmtCount.setText(Util.convertViewCount(Double.parseDouble(cmtCount)));
         if (idVideoM == null) {
             return;
@@ -172,7 +179,7 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
         rvListComment.setNestedScrollingEnabled(false);
         rvListComment.setAdapter(adapter);
 
-        setFirstData();
+        setFirstDataPo();
 
         rvListComment.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
@@ -192,10 +199,11 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
         });
     }
 
-    private void setFirstData() {
+    private void setFirstDataPo() {
         listCmtItem = null;
         callApiComment(idVideoM, pageToken, "relevance", "10");
     }
+
 
     // Set propress bar load data
     private void setProgressBar() {
@@ -210,16 +218,19 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getContext(), "Load Page" + currenPage, Toast.LENGTH_SHORT).show();
-                callApiComment(idVideoM, pageToken, "relevance", "10");
-                isLoading = false;
+                if (LoadPage == 1) {
+                    callApiComment(idVideoM, pageToken, "relevance", "10");
+                    isLoading = false;
+                } else if (LoadPage == 2) {
+                    callApiComment(idVideoM, pageToken, "time", "10");
+                    isLoading = false;
+                }
             }
         },1000);
     }
 
     private void callApiComment(String id, String nextPageToken, String order, String maxResults) {
-
-        progressDialog.show();
+        listAdd = new ArrayList<>();
         ApiServicePlayList.apiServicePlayList.comment(
                 nextPageToken,
                 "snippet",
@@ -234,8 +245,6 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
-                listAdd = new ArrayList<>();
-
                 String authorLogoUrl = "", authorName = "", publishAt = "", updateAt = "",
                         displayContentCmt = "", dateDiff = "", authorIdChannel = "", idComment = "";
                 int likeCount = 0, totalRepliesCount = 0;
@@ -243,12 +252,7 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
 
                 Comment comment = response.body();
                 if (comment != null) {
-                    int totalPlayList =  comment.getPageInfo().getTotalResults() - 10;
-                    if (totalPlayList % 10 != 0) {
-                        totalPage = (totalPlayList / 10) + 1;
-                    } else {
-                        totalPage = (totalPlayList / 10);
-                    }
+
                     pageToken = comment.getNextPageToken();
                     ArrayList<ItemsComment> listItem = comment.getItems();
                     for (int i = 0; i < listItem.size(); i++) {
@@ -265,9 +269,15 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
                         updateAt = listItem.get(i).getSnippet()
                                 .getTopLevelComment().getSnippet()
                                 .getUpdatedAt();
-                        authorIdChannel = listItem.get(i).getSnippet()
+                        if (listItem.get(i).getSnippet()
                                 .getTopLevelComment().getSnippet()
-                                .getAuthorChannelId().getValue();
+                                .getAuthorChannelId() == null) {
+                            authorIdChannel = "";
+                        } else {
+                            authorIdChannel = listItem.get(i).getSnippet()
+                                    .getTopLevelComment().getSnippet()
+                                    .getAuthorChannelId().getValue();
+                        }
                         displayContentCmt = listItem.get(i).getSnippet()
                                 .getTopLevelComment().getSnippet()
                                 .getTextDisplay();
@@ -276,25 +286,27 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
                                 .getLikeCount();
                         totalRepliesCount = listItem.get(i).getSnippet().getTotalReplyCount();
                         repliesComment = listItem.get(i).getReplies();
+
+
+
                         // Thêm vào list
 
                         listAdd.add(new CommentItem(
                                 idComment, displayContentCmt, authorName, authorLogoUrl,
-                                authorIdChannel, likeCount, publishAt,
-                                updateAt, totalRepliesCount, repliesComment
-                        ));
-                        if (listCmtItem == null) {
-                            listCmtItem = listAdd;
-                            adapter.setData(listCmtItem);
-                            setProgressBar();
-                        } else {
-                            adapter.removeFooterLoading();
-                            listCmtItem.addAll(listAdd);
-                            adapter.notifyDataSetChanged();
-                            setProgressBar();
-                        }
-                        progressDialog.dismiss();
+                                authorIdChannel, String.valueOf(likeCount), publishAt,
+                                updateAt, String.valueOf(totalRepliesCount), repliesComment));
                     }
+                    if (listCmtItem == null) {
+                        listCmtItem = listAdd;
+                        adapter.setData(listCmtItem);
+                        setProgressBar();
+                    } else {
+                        adapter.removeFooterLoading();
+                        listCmtItem.addAll(listAdd);
+                        adapter.notifyDataSetChanged();
+                        setProgressBar();
+                    }
+
                 }
             }
 
@@ -320,14 +332,18 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
             public boolean onMenuItemClick(MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.mn_top_cmt:
-                        listCmtItem = new ArrayList<>();
+                        currenPage = 1;
+                        LoadPage = 1;
+                        listCmtItem = null;
                         callApiComment(idVideoM, "", "relevance", "10");
-                        adapter.setData(listCmtItem);
+//                        adapter.setData(listCmtItem);
                         break;
                     case R.id.mn_new_first:
-                        listCmtItem = new ArrayList<>();
+                        currenPage = 1;
+                        LoadPage = 2;
+                        listCmtItem = null;
                         callApiComment(idVideoM, "", "time", "10");
-                        adapter.setData(listCmtItem);
+//                        adapter.setData(listCmtItem);
                         break;
                 }
                 return false;

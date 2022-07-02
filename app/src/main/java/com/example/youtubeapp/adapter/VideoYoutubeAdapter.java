@@ -14,7 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapp.R;
-import com.example.youtubeapp.model.itemrecycleview.VideoChannelItem;
+import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.model.itemrecycleview.VideoItem;
 import com.example.youtubeapp.my_interface.IItemOnClickVideoListener;
@@ -27,14 +27,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class VideoYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<VideoItem> listItemVideo;
     private IItemOnClickVideoListener itemOnClickVideoListener;
+    private IItemOnClickChannelListener onClickChannelListener;
 
     private final static int VIEW_TYPE_ITEM = 0,
             VIEW_TYPE_LOADING = 1;
     private VideoItem itemVideo;
     private boolean isLoadingAdd;
 
-    public VideoYoutubeAdapter(IItemOnClickVideoListener itemOnClickVideoListener) {
+    public VideoYoutubeAdapter(IItemOnClickVideoListener itemOnClickVideoListener, IItemOnClickChannelListener onClickChannelListener) {
         this.itemOnClickVideoListener = itemOnClickVideoListener;
+        this.onClickChannelListener = onClickChannelListener;
     }
     public void setData(ArrayList<VideoItem> listItemVideo) {
         this.listItemVideo = listItemVideo;
@@ -105,6 +107,13 @@ public class VideoYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void onClick(View v) {
                     itemOnClickVideoListener.OnClickItemVideo(video);
+                }
+            });
+
+            viewHolder.civLogoChannel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickChannelListener.onClickOpenChannel(idChannel, titleChannel);
                 }
             });
 

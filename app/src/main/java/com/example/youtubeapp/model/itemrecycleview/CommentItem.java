@@ -10,16 +10,16 @@ public class CommentItem implements Serializable {
     private String authorName;
     private String authorLogoUrl;
     private String authorChannelId;
-    private int likeCount;
+    private String likeCount;
     private String publishedAt;
     private String updateAt;
-    private int totalReplyCount;
+    private String totalReplyCount;
     private RepliesComment repliesComent;
 
     public CommentItem(String idComment, String textDisplay, String authorName,
                        String authorLogoUrl, String authorChannelId,
-                       int likeCount, String publishedAt,
-                       String updateAt, int totalReplyCount,
+                       String likeCount, String publishedAt,
+                       String updateAt, String totalReplyCount,
                        RepliesComment repliesComent) {
         this.idComment = idComment;
         this.textDisplay = textDisplay;
@@ -31,6 +31,22 @@ public class CommentItem implements Serializable {
         this.updateAt = updateAt;
         this.totalReplyCount = totalReplyCount;
         this.repliesComent = repliesComent;
+    }
+
+    public String getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(String likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public String getTotalReplyCount() {
+        return totalReplyCount;
+    }
+
+    public void setTotalReplyCount(String totalReplyCount) {
+        this.totalReplyCount = totalReplyCount;
     }
 
     public String getIdComment() {
@@ -73,13 +89,7 @@ public class CommentItem implements Serializable {
         this.authorChannelId = authorChannelId;
     }
 
-    public int getLikeCount() {
-        return likeCount;
-    }
 
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
-    }
 
     public String getPublishedAt() {
         return publishedAt;
@@ -97,13 +107,6 @@ public class CommentItem implements Serializable {
         this.updateAt = updateAt;
     }
 
-    public int getTotalReplyCount() {
-        return totalReplyCount;
-    }
-
-    public void setTotalReplyCount(int totalReplyCount) {
-        this.totalReplyCount = totalReplyCount;
-    }
 
     public RepliesComment getRepliesComent() {
         return repliesComent;

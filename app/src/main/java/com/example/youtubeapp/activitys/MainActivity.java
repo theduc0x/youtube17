@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,7 +30,9 @@ import com.example.youtubeapp.fragment.HomeFragment;
 import com.example.youtubeapp.fragment.LibraryFragment;
 import com.example.youtubeapp.fragment.NotificationFragment;
 import com.example.youtubeapp.fragment.SearchFragment;
+import com.example.youtubeapp.fragment.SearchResultsFragment;
 import com.example.youtubeapp.fragment.SubcriptionFragment;
+import com.example.youtubeapp.utiliti.Util;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -147,6 +150,7 @@ public class MainActivity extends AppCompatActivity
     // KHi load lại trang home
     @Override
     public void onRefresh() {
+        tbNav.setVisibility(View.VISIBLE);
         HomeFragment homeFragment1 = new HomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_content, homeFragment1, "fragHome");
@@ -170,6 +174,34 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.addToBackStack("SearchFragment");
         fragmentTransaction.commit();
 
+    }
+
+    public void addFragmentSearchResults(String q) {
+        tbNav.setVisibility(View.VISIBLE);
+//        removeFragmentSearch();
+        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString(Util.BUNDLE_EXTRA_Q, q);
+        searchResultsFragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.fl_content, searchResultsFragment, "fragSearchRe");
+        fragmentTransaction.addToBackStack("SearchFragmentRe");
+        fragmentTransaction.commit();
+
+    }
+
+    private void removeFragmentSearch() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        SearchFragment searchFragment
+                = (SearchFragment) getSupportFragmentManager().findFragmentByTag("fragSearch");
+        if (searchFragment != null) {
+            transaction.remove(searchFragment);
+            transaction.commit();
+        } else {
+            Toast.makeText(this,
+                    "Không có fragment để xóa",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

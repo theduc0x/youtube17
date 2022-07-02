@@ -1,6 +1,6 @@
-package com.example.youtubeapp.model.listvideorelated;
+package com.example.youtubeapp.model.searchyoutube;
 
-public class StandardRe {
+public class DefaultRe {
     public String url;
     public int width;
     public int height;

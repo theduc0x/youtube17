@@ -1,6 +1,6 @@
-package com.example.youtubeapp.model.listvideorelated;
+package com.example.youtubeapp.model.searchyoutube;
 
-public class ItemsRelated {
+public class ItemsSearch {
     public String kind;
     public String etag;
     public Id id;

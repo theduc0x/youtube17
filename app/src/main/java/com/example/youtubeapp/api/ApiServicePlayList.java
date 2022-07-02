@@ -7,7 +7,7 @@ import com.example.youtubeapp.model.listcomment.Comment;
 import com.example.youtubeapp.model.listplaylistvideochannel.PlayList;
 import com.example.youtubeapp.model.listreplies.Replies;
 import com.example.youtubeapp.model.listvideohome.ListVideo;
-import com.example.youtubeapp.model.listvideorelated.RelatedVideo;
+import com.example.youtubeapp.model.searchyoutube.Search;
 import com.example.youtubeapp.model.playlistitem.PlayListItemVideo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -102,7 +102,7 @@ public interface ApiServicePlayList {
 
     // Related Video Id
     @GET("youtube/v3/search")
-    Call<RelatedVideo> relatedCall(
+    Call<Search> relatedCall(
             @Query("pageToken") String pageToken,
             @Query("part") String partSnippet,
             @Query("relatedToVideoId") String relatedId,
@@ -112,7 +112,7 @@ public interface ApiServicePlayList {
 
     // Video mới nhất update từ channel
     @GET("youtube/v3/search")
-    Call<RelatedVideo> videoUpdateNews(
+    Call<Search> videoUpdateNews(
             @Query("pageToken") String pageToken,
             @Query("part") String partSnippet,
             @Query("part") String partId,
@@ -145,6 +145,13 @@ public interface ApiServicePlayList {
     Call<ChannelsList> channelsList(
             @Query("part") String part,
             @Query("channelId") String channelId,
+            @Query("key") String key);
+
+    // list dữ liệu tìm kiếm
+    @GET("youtube/v3/youtube/v3/search")
+    Call<Search> searchList(
+            @Query("part") String part,
+            @Query("q") String q,
             @Query("key") String key);
 
 }

@@ -22,9 +22,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.activitys.MainActivity;
 import com.example.youtubeapp.adapter.HintAdapter;
 import com.example.youtubeapp.api.ApiServiceHintSearch;
 import com.example.youtubeapp.my_interface.IItemOnClickHintListener;
+import com.example.youtubeapp.my_interface.IItemOnClickSearchListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,12 +42,14 @@ public class SearchFragment extends Fragment {
     RecyclerView rvListHint;
     ArrayList<String> listHint;
     HintAdapter adapter;
+    MainActivity mainActivity;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         initView(view);
         backHome();
+        mainActivity = (MainActivity) getActivity();
         listHint = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
                 RecyclerView.VERTICAL, false);
@@ -54,6 +58,13 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClickListener(String s) {
                 etSearch.setText(s);
+            }
+        }, // khi click tìm kiếm
+                new IItemOnClickSearchListener() {
+            @Override
+            public void onClickSearchListener(String q) {
+                mainActivity.addFragmentSearchResults(q);
+                etSearch.setText(q);
             }
         });
         rvListHint.setAdapter(adapter);
@@ -74,8 +85,11 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-//                String ss = etSearch.getText().toString();
-//                callApiHintSearch(ss);
+                String ss = etSearch.getText().toString();
+                if (ss.equals("")) {
+                    listHint.clear();
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
 //        callApiHintSearch("thích");

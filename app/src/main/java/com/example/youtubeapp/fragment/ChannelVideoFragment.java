@@ -23,8 +23,8 @@ import com.example.youtubeapp.model.detailvideo.DetailVideo;
 import com.example.youtubeapp.model.detailvideo.ItemVideo;
 import com.example.youtubeapp.model.itemrecycleview.VideoChannelItem;
 import com.example.youtubeapp.model.itemrecycleview.VideoItem;
-import com.example.youtubeapp.model.listvideorelated.ItemsRelated;
-import com.example.youtubeapp.model.listvideorelated.RelatedVideo;
+import com.example.youtubeapp.model.searchyoutube.ItemsSearch;
+import com.example.youtubeapp.model.searchyoutube.Search;
 import com.example.youtubeapp.my_interface.IItemOnClickVideoListener;
 import com.example.youtubeapp.my_interface.PaginationScrollListener;
 
@@ -46,7 +46,7 @@ public class ChannelVideoFragment extends Fragment {
     private int totalPage = 5;
     private int currenPage = 1;
 
-    RelatedVideo video;
+    Search video;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -129,9 +129,9 @@ public class ChannelVideoFragment extends Fragment {
                 "video",
                 Util.API_KEY,
                 maxResults
-        ).enqueue(new Callback<RelatedVideo>() {
+        ).enqueue(new Callback<Search>() {
             @Override
-            public void onResponse(Call<RelatedVideo> call, Response<RelatedVideo> response) {
+            public void onResponse(Call<Search> call, Response<Search> response) {
                 String urlThumbnails = "", titleVideo = "", publishAt = "",
                         viewCount = "", idVideo = "";
 
@@ -141,7 +141,7 @@ public class ChannelVideoFragment extends Fragment {
                     Log.d("page", String.valueOf(totalPage));
                     Log.d("page", String.valueOf(video.getPageInfo().getTotalResults()));
                     pageToken = video.getNextPageToken();
-                    ArrayList<ItemsRelated> listItem = video.getItems();
+                    ArrayList<ItemsSearch> listItem = video.getItems();
 
                     for (int i = 0;i <listItem.size(); i++) {
                         idVideo = listItem.get(i).getId().getVideoId();
@@ -178,7 +178,7 @@ public class ChannelVideoFragment extends Fragment {
                 }
             }
             @Override
-            public void onFailure(Call<RelatedVideo> call, Throwable t) {
+            public void onFailure(Call<Search> call, Throwable t) {
                         Log.d("error", t.toString());
             }
         });

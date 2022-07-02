@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,15 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.my_interface.IItemOnClickHintListener;
+import com.example.youtubeapp.my_interface.IItemOnClickSearchListener;
 
 import java.util.ArrayList;
 
 public class HintAdapter extends RecyclerView.Adapter<HintAdapter.HintViewHolder> {
     ArrayList<String> listHint;
     IItemOnClickHintListener onClickHintListener;
+    IItemOnClickSearchListener onClickSearchListener;
 
-    public HintAdapter(IItemOnClickHintListener onClickHintListener) {
+    public HintAdapter(IItemOnClickHintListener onClickHintListener,
+                       IItemOnClickSearchListener onClickSearchListener) {
         this.onClickHintListener = onClickHintListener;
+        this.onClickSearchListener = onClickSearchListener;
     }
 
     public void setData(ArrayList<String> listHint) {
@@ -49,6 +54,13 @@ public class HintAdapter extends RecyclerView.Adapter<HintAdapter.HintViewHolder
                 onClickHintListener.onClickListener(hint);
             }
         });
+
+        holder.llOpenSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSearchListener.onClickSearchListener(hint);
+            }
+        });
     }
 
     @Override
@@ -62,10 +74,12 @@ public class HintAdapter extends RecyclerView.Adapter<HintAdapter.HintViewHolder
     class HintViewHolder extends RecyclerView.ViewHolder {
         TextView tvHintSearch;
         ImageView ibGetHint;
+        LinearLayout llOpenSearch;
         public HintViewHolder(@NonNull View itemView) {
             super(itemView);
             tvHintSearch = itemView.findViewById(R.id.tv_hint_search);
             ibGetHint = itemView.findViewById(R.id.ib_get_hint);
+            llOpenSearch = itemView.findViewById(R.id.ll_open_search);
         }
     }
 }
