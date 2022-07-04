@@ -3,7 +3,6 @@ package com.example.youtubeapp.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -12,7 +11,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapp.R;
-import com.example.youtubeapp.model.infochannel.Channel;
 import com.example.youtubeapp.model.itemrecycleview.ChannelItem;
 import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
 import com.example.youtubeapp.utiliti.Util;
@@ -73,15 +71,16 @@ public class ListChannelAdapter extends RecyclerView.Adapter<ListChannelAdapter.
     class ListChannelViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView civLogoChannel;
         private TextView tvTitleChannel, tvSubCount, tvVideoCount;
-        private AppCompatButton btSub;
+        private TextView tvSub;
         private LinearLayout llOpenChannel;
+
         public ListChannelViewHolder(@NonNull View itemView) {
             super(itemView);
             civLogoChannel = itemView.findViewById(R.id.civ_logo_channel_list);
             tvTitleChannel = itemView.findViewById(R.id.tv_title_channel_list);
             tvSubCount = itemView.findViewById(R.id.tv_sub_count_channel_list);
             tvVideoCount = itemView.findViewById(R.id.tv_video_count_channel_list);
-            btSub = itemView.findViewById(R.id.bt_subsribe_channel_list);
+            tvSub = itemView.findViewById(R.id.tv_subscribe_channel_list);
             llOpenChannel = itemView.findViewById(R.id.ll_open_channel_list);
         }
     }

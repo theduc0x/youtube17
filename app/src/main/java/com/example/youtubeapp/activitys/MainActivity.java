@@ -8,11 +8,13 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         tbNav = findViewById(R.id.tb_nav);
         tbNav.setVisibility(View.VISIBLE);
         bnvFragment = findViewById(R.id.bnv_fragment);
+        bnvFragment.setVisibility(View.VISIBLE);
         flContent = findViewById(R.id.fl_content);
         srlReloadData = findViewById(R.id.srl_reload);
         ablHome = findViewById(R.id.abl_nav);
@@ -128,7 +131,10 @@ public class MainActivity extends AppCompatActivity
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.mn_search:
-                        addFragmentSearch();
+                        addFragmentSearch("");
+
+                        break;
+
                 }
                 return false;
             }
@@ -166,18 +172,31 @@ public class MainActivity extends AppCompatActivity
         }, 1000);
     }
 
-    private void addFragmentSearch() {
+    public void addFragmentSearch(String s) {
+        bnvFragment.setVisibility(View.GONE);
         tbNav.setVisibility(View.GONE);
         SearchFragment searchFragment = new SearchFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Util.BUNDLE_EXTRA_TEXT_EDITTEXT, s);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        searchFragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.fl_content, searchFragment, "fragSearch");
         fragmentTransaction.addToBackStack("SearchFragment");
         fragmentTransaction.commit();
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setToolBarMainVisible();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragSearch");
+
+    }
+
     public void addFragmentSearchResults(String q) {
-        tbNav.setVisibility(View.VISIBLE);
+        tbNav.setVisibility(View.GONE);
+        bnvFragment.setVisibility(View.VISIBLE);
 //        removeFragmentSearch();
         SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -190,23 +209,35 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void removeFragmentSearch() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        SearchFragment searchFragment
-                = (SearchFragment) getSupportFragmentManager().findFragmentByTag("fragSearch");
-        if (searchFragment != null) {
-            transaction.remove(searchFragment);
-            transaction.commit();
-        } else {
-            Toast.makeText(this,
-                    "Không có fragment để xóa",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void removeFragmentSearch() {
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        SearchFragment searchFragment
+//                = (SearchFragment) getSupportFragmentManager().findFragmentByTag("fragSearch");
+//        if (searchFragment != null) {
+//            transaction.remove(searchFragment);
+//            transaction.commit();
+//        } else {
+//            Toast.makeText(this,
+//                    "Không có fragment để xóa",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        setToolBarMainVisible();
+//    }
 
     @Override
-    public void onBackPressed() {
+    protected void onRestart() {
+        super.onRestart();
+        setToolBarMainVisible();
+    }
+
+    public void setToolBarMainVisible() {
+        bnvFragment.setVisibility(View.VISIBLE);
         tbNav.setVisibility(View.VISIBLE);
-        super.onBackPressed();
+        Log.d("fjdsal","success");
     }
 }

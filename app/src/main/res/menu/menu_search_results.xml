@@ -7,9 +7,13 @@
         app:showAsAction="ifRoom"
         android:title="@string/title_voice"/>
     <item
-        android:id="@+id/mn_close_search"
-        android:icon="@drawable/baseline_close_black_24"
+        android:id="@+id/mn_cast_search"
+        android:icon="@drawable/baseline_cast_black_24"
         app:showAsAction="ifRoom"
-        android:visible="false"
+        android:title="@string/title_voice"/>
+    <item
+        android:id="@+id/mn_more_search"
+        android:icon="@drawable/baseline_more_vert_black_24"
+        app:showAsAction="ifRoom"
         android:title="@string/title_voice"/>
 </menu>

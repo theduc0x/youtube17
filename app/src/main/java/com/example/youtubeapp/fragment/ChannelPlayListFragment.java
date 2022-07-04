@@ -121,6 +121,7 @@ public class ChannelPlayListFragment extends Fragment {
                 nextPageToken,
                 "contentDetails,id,localizations,player,snippet,status",
                 idChannel,
+                null,
                 Util.API_KEY,
                 maxResults
         ).enqueue(new Callback<PlayList>() {

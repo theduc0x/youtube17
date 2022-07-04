@@ -1,15 +1,21 @@
 package com.example.youtubeapp.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -27,6 +33,7 @@ import com.example.youtubeapp.adapter.HintAdapter;
 import com.example.youtubeapp.api.ApiServiceHintSearch;
 import com.example.youtubeapp.my_interface.IItemOnClickHintListener;
 import com.example.youtubeapp.my_interface.IItemOnClickSearchListener;
+import com.example.youtubeapp.utiliti.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,17 +45,23 @@ import retrofit2.Callback;
 
 public class SearchFragment extends Fragment {
     private ImageButton ibBack;
+    String how;
     EditText etSearch;
     RecyclerView rvListHint;
     ArrayList<String> listHint;
     HintAdapter adapter;
     MainActivity mainActivity;
+    Toolbar tbSearch;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         initView(view);
         backHome();
+        getBundle();
+        etSearch.setText(how);
+        etSearch.requestFocus();
+        etSearch.setFocusable(true);
         mainActivity = (MainActivity) getActivity();
         listHint = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
@@ -80,6 +93,8 @@ public class SearchFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String ss = etSearch.getText().toString();
+                tbSearch.getMenu().findItem(R.id.mn_voice_search).setVisible(false);
+                tbSearch.getMenu().findItem(R.id.mn_close_search).setVisible(true);
                 callApiHintSearch(ss);
             }
 
@@ -87,19 +102,38 @@ public class SearchFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 String ss = etSearch.getText().toString();
                 if (ss.equals("")) {
+                    tbSearch.getMenu().findItem(R.id.mn_voice_search).setVisible(true);
+                    tbSearch.getMenu().findItem(R.id.mn_close_search).setVisible(false);
                     listHint.clear();
                     adapter.notifyDataSetChanged();
                 }
             }
         });
+
 //        callApiHintSearch("thích");
+
+        // sự kiện nút xóa edittext
+        tbSearch.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.mn_close_search:
+                        etSearch.setText("");
+                }
+                return false;
+            }
+        });
         return view;
+    }
+    public void setToolBar() {
+        mainActivity.setToolBarMainVisible();
     }
 
     private void initView(View view) {
         ibBack = view.findViewById(R.id.ib_back_search);
         etSearch = view.findViewById(R.id.et_search);
         rvListHint = view.findViewById(R.id.rv_list_hint_search);
+        tbSearch = view.findViewById(R.id.tb_nav_search);
     }
     // Quay trở lại trước đó
     private void backHome() {
@@ -107,9 +141,12 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
+                mainActivity.setToolBarMainVisible();
             }
         });
     }
+
+
 
     private void callApiHintSearch(String hint) {
         listHint.clear();
@@ -141,5 +178,10 @@ public class SearchFragment extends Fragment {
             }
         });
         requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getBundle() {
+        Bundle bundleRe = getArguments();
+        how = bundleRe.getString(Util.BUNDLE_EXTRA_TEXT_EDITTEXT);
     }
 }

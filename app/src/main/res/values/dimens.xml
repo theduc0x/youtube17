@@ -24,4 +24,9 @@
     <dimen name="mt_15dp">15dp</dimen>
     <dimen name="height_280dp">280dp</dimen>
     <dimen name="width_180dp">180dp</dimen>
+    <dimen name="mt_5dp">5dp</dimen>
+    <dimen name="me_15dp">15dp</dimen>
+    <dimen name="padding_25dp">25dp</dimen>
+    <dimen name="pe_10dp">10dp</dimen>
+    <dimen name="action_button_padding">4dp</dimen>
 </resources>

@@ -40,6 +40,7 @@ public class Util {
     public static String EXTRA_TITLE_CHANNEL_TO_CHANNEL = "to title channel h";
     public static String EXTRA_ID_CHANNEL_TO_CHANNEL_FROM_ADAPTER = "to channel";
     public static String BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST = "to play list";
+    public static String BUNDLE_EXTRA_TEXT_EDITTEXT = "edittext";
     public static String BUNDLE_EXTRA_Q = "extra q";
 //    public static ArrayList<VideoItem> listVideoItem = null;
 //    public static ArrayList<CommentItem> listCmtItem = null;

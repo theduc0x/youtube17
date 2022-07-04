@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.ChannelAboutFragment">
 
@@ -17,6 +16,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,7 +28,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_black"
                 android:textColor="@color/black"
+                android:textStyle="bold"
                 android:textSize="20dp"
                 android:text="@string/tv_desc_about_channel"/>
 
@@ -33,6 +38,7 @@
                 android:id="@+id/tv_content_desc_about"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:text="@string/tv_test_content_desc"/>
 
 <!--            <TextView-->
@@ -52,7 +58,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/mt_20dp"
+                android:fontFamily="@font/roboto_black"
                 android:textColor="@color/black"
+                android:textStyle="bold"
                 android:textSize="@dimen/textSize_20dp"
                 android:text="@string/tv_details_about"/>
 
@@ -72,7 +80,8 @@
                     android:id="@+id/tv_link_youtube_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/ms_10dp"
                     android:text="@string/tv_link_youtube_test"/>
 
             </LinearLayout>
@@ -92,7 +101,8 @@
                     android:id="@+id/tv_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/ms_10dp"
                     android:text="@string/tv_test_location"/>
 
             </LinearLayout>
@@ -112,13 +122,15 @@
                     android:id="@+id/tv_published_channel_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/ms_10dp"
                     android:text="@string/tv_published_channel"/>
                 <TextView
                     android:id="@+id/tv_published_channel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/ms_10dp"
                     android:text="Jun 23, 2014"/>
 
             </LinearLayout>
@@ -138,12 +150,16 @@
                     android:id="@+id/tv_total_view_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/ms_10dp"
                     android:text="650,000 views"/>
 
             </LinearLayout>
+
+
         </LinearLayout>
 
+        </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

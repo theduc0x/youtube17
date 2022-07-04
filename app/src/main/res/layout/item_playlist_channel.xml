@@ -86,5 +86,5 @@
         android:id="@+id/iv_select_option_video_channel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_more_vert_black_24"/>
+        android:src="@drawable/baseline_more_vert_black_18"/>
 </LinearLayout>

@@ -128,6 +128,7 @@ public interface ApiServicePlayList {
             @Query("pageToken") String pageToken,
             @Query("part") String part,
             @Query("channelId") String channelId,
+            @Query("id") String idPlayList,
             @Query("key") String key,
             @Query("maxResults") String maxResults);
 
@@ -148,10 +149,11 @@ public interface ApiServicePlayList {
             @Query("key") String key);
 
     // list dữ liệu tìm kiếm
-    @GET("youtube/v3/youtube/v3/search")
+    @GET("youtube/v3/search")
     Call<Search> searchList(
+            @Query("pageToken") String pageToken,
             @Query("part") String part,
             @Query("q") String q,
-            @Query("key") String key);
-
+            @Query("key") String key,
+            @Query("maxResults") String maxResults);
 }

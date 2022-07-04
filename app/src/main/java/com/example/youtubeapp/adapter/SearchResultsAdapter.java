@@ -1,7 +1,6 @@
 package com.example.youtubeapp.adapter;
 
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +11,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapp.R;
-import com.example.youtubeapp.api.ApiServicePlayList;
-import com.example.youtubeapp.model.detailvideo.DetailVideo;
-import com.example.youtubeapp.model.detailvideo.ItemVideo;
-import com.example.youtubeapp.model.infochannel.Channel;
-import com.example.youtubeapp.model.infochannel.Itemss;
-import com.example.youtubeapp.model.itemrecycleview.ChannelItem;
 import com.example.youtubeapp.model.itemrecycleview.SearchItem;
-import com.example.youtubeapp.model.itemrecycleview.VideoItem;
-import com.example.youtubeapp.model.searchyoutube.ItemsSearch;
 import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
-import com.example.youtubeapp.my_interface.IItemOnClickPlayListListener;
 import com.example.youtubeapp.my_interface.IItemOnClickPlayListSearchListener;
-import com.example.youtubeapp.my_interface.IItemOnClickVideoListener;
 import com.example.youtubeapp.my_interface.IItemOnClickVideoSearchListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.squareup.picasso.Picasso;
@@ -37,9 +25,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final static int
@@ -102,7 +87,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 return;
             }
             ItemChannelViewHolder viewHolder = (ItemChannelViewHolder) holder;
-            viewHolder.setData(item, position);
+            viewHolder.setData(item);
         } else if (holder.getItemViewType() == VIEW_TYPE_ITEM_VIDEO) {
             SearchItem item = listSearch.get(position);
             if (item == null) {
@@ -141,8 +126,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
     // ViewHolder của Video
     class ItemChannelViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView civLogoChannel;
-        private TextView tvTitleChannel, tvSubCount, tvVideoCount;
-        private AppCompatButton btSub;
+        private TextView tvTitleChannel, tvSubCount, tvVideoCount, tvSub;
         private LinearLayout llOpenChannel;
 
         public ItemChannelViewHolder(@NonNull View itemView) {
@@ -151,28 +135,25 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
             tvTitleChannel = itemView.findViewById(R.id.tv_title_channel_list);
             tvSubCount = itemView.findViewById(R.id.tv_sub_count_channel_list);
             tvVideoCount = itemView.findViewById(R.id.tv_video_count_channel_list);
-            btSub = itemView.findViewById(R.id.bt_subsribe_channel_list);
+            tvSub = itemView.findViewById(R.id.tv_subscribe_channel_list);
             llOpenChannel = itemView.findViewById(R.id.ll_open_channel_list);
         }
 
-        public void setData(SearchItem item, int pos) {
+        public void setData(SearchItem item) {
             String urlLogoChannel = item.getUrlLogoChannel();
             String titleChannel = item.getTitleChannel();
             String idChannel = item.getIdChannel();
-            callApiChannelFull(idChannel, item, pos);
+//            callApiChannelFull(idChannel, item, pos);
 
             String videoCount = item.getVideoCount();
-            if (item.getSubCount().equals("")) {
-                tvSubCount.setVisibility(View.GONE);
-            } else {
+            if (!item.getSubCount().equals("")) {
                 tvSubCount.setText(Util.convertViewCount(Double.parseDouble(item.getSubCount())));
             }
-            String subCount = item.getSubCount();
-
             Picasso.get().load(urlLogoChannel).into(civLogoChannel);
-            tvTitleChannel.setText(item.getTitleChannel());
-            tvVideoCount.setText(Util.convertViewCount(Double.parseDouble(item.getVideoCount())));
-
+            tvTitleChannel.setText(titleChannel);
+            if (!videoCount.equals("")) {
+                tvVideoCount.setText(Util.convertViewCount(Double.parseDouble(videoCount)));
+            }
             llOpenChannel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -230,7 +211,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
             Picasso.get().load(urlLogoChannel).into(civLogoChannel);
 
             tvTimeVideo.setText(dateDayDiff);
-            tvViewCountVideo.setText("• " + viewCountVideo + " views •");
+            if (!viewCountVideo.equals("")) {
+                viewCountVideo = Util.convertViewCount(Double.parseDouble(viewCountVideo));
+                tvViewCountVideo.setText("• " + viewCountVideo + " views •");
+            }
+
             String idVideo = video.getIdVideo();
             clItemClick.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -266,8 +251,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         public void setData(SearchItem item) {
             Picasso.get().load(item.getUrlThumbnailsVideo()).into(ivThumbnails);
-            tvVideoCount.setText(item.getVideoCount() + " video");
-            tvVideoCountI.setText(item.getVideoCount());
+            tvVideoCount.setText(item.getVideoCountPlayList() + " video");
+            tvVideoCountI.setText(item.getVideoCountPlayList());
             tvTitleChannel.setText(item.getTitleChannel());
             tvTitleVideo.setText(item.getTvTitleVideo());
             String idPlayList = item.getIdPlayList();
@@ -301,106 +286,106 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    // Api thông tin channel;
-    public void callApiChannelFull(String idChannel1, SearchItem itemCh, int pos) {
-        ApiServicePlayList.apiServicePlayList.infoChannelFull(
-                "contentDetails",
-                "snippet",
-                "statistics",
-                "topicDetails",
-                "brandingSettings",
-                idChannel1,
-                Util.API_KEY
-        ).enqueue(new Callback<Channel>() {
-            @Override
-            public void onResponse(Call<Channel> call, Response<Channel> response) {
-                String urlBanner = "", titleChannel = "", subCount = "",
-                        videoCount = "", urlLogoChannel = "", introduce = "", idChannelList = "";
-                boolean isCheckHideSub = false;
-                Itemss item = null;
-                Channel channel = response.body();
-                if (channel != null) {
-                    ArrayList<Itemss> listItem = channel.getItems();
-                    item = listItem.get(0);
-                    titleChannel = item.getSnippet().getTitle();
-                    isCheckHideSub = item.getStatistics().isHiddenSubscriberCount();
-                    if (isCheckHideSub) {
-                        subCount = "";
-                    } else {
-                        subCount = item.getStatistics().getSubscriberCount();
-                    }
-                    videoCount = item.getStatistics().getVideoCount();
-                    urlLogoChannel = item.getSnippet().getThumbnails().getHigh().getUrl();
-                    introduce = item.getSnippet().getDescription();
-                    idChannelList = item.getId();
-                    Log.d("duc3", titleChannel);
+//    // Api thông tin channel;
+//    public void callApiChannelFull(String idChannel1, SearchItem itemCh, int pos) {
+//        ApiServicePlayList.apiServicePlayList.infoChannelFull(
+//                "contentDetails",
+//                "snippet",
+//                "statistics",
+//                "topicDetails",
+//                "brandingSettings",
+//                idChannel1,
+//                Util.API_KEY
+//        ).enqueue(new Callback<Channel>() {
+//            @Override
+//            public void onResponse(Call<Channel> call, Response<Channel> response) {
+//                String urlBanner = "", titleChannel = "", subCount = "",
+//                        videoCount = "", urlLogoChannel = "", introduce = "", idChannelList = "";
+//                boolean isCheckHideSub = false;
+//                Itemss item = null;
+//                Channel channel = response.body();
+//                if (channel != null) {
+//                    ArrayList<Itemss> listItem = channel.getItems();
+//                    item = listItem.get(0);
+//                    titleChannel = item.getSnippet().getTitle();
+//                    isCheckHideSub = item.getStatistics().isHiddenSubscriberCount();
+//                    if (isCheckHideSub) {
+//                        subCount = "";
+//                    } else {
+//                        subCount = item.getStatistics().getSubscriberCount();
+//                    }
+//                    videoCount = item.getStatistics().getVideoCount();
+//                    urlLogoChannel = item.getSnippet().getThumbnails().getHigh().getUrl();
+//                    introduce = item.getSnippet().getDescription();
+//                    idChannelList = item.getId();
+//                    Log.d("duc3", titleChannel);
+//
+//                    itemCh.setSubCount(subCount);
+//                    itemCh.setVideoCount(videoCount);
+//
+//                    notifyItemChanged(pos);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Channel> call, Throwable t) {
+//                Log.d("ducak", t.toString());
+//            }
+//        });
+//    }
 
-                    itemCh.setSubCount(subCount);
-                    itemCh.setVideoCount(videoCount);
-
-                    notifyItemChanged(pos);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Channel> call, Throwable t) {
-                Log.d("ducak", t.toString());
-            }
-        });
-    }
-
-    private void callApiDetailVideo(String idVideo) {
-        ApiServicePlayList.apiServicePlayList.detailVideo(
-                "snippet",
-                "statistics",
-                idVideo,
-                Util.API_KEY
-        ).enqueue(new Callback<DetailVideo>() {
-            @Override
-            public void onResponse(Call<DetailVideo> call, Response<DetailVideo> response) {
-                String urlThumbnailVideo = "", titleVideo = "", titleChannel = "",
-                        publishAt = "", viewCountVideo = "", commentCount = "",
-                        idVideo = "", likeCountVideo = "", descVideo = "",
-                        idChannel = "", urlLogoChannel = "";
-
-                DetailVideo detailVideo = response.body();
-                if (detailVideo != null) {
-                    ArrayList<ItemVideo> listItem = detailVideo.getItems();
-
-                    urlThumbnailVideo = listItem.get(0)
-                            .getSnippet().getThumbnails()
-                            .getHigh().getUrl();
-
-                    viewCountVideo = listItem.get(0).getStatistics().getViewCount();
-                    titleVideo = listItem.get(0).getSnippet().getTitle();
-                    titleChannel = listItem.get(0).getSnippet().getChannelTitle();
-                    idChannel = listItem.get(0).getSnippet().getChannelId();
-
-                    idVideo = listItem.get(0).getId();
-                    urlLogoChannel = "";
-                    publishAt = listItem.get(0).getSnippet().getPublishedAt();
-//                        String dateDayDiff = Util.getTime(timeVideo);
-
-                    viewCountVideo = listItem.get(0).getStatistics().getViewCount();
-                    double viewCount = Double.parseDouble(viewCountVideo);
-                    viewCountVideo = Util.convertViewCount(viewCount);
-
-
-                    likeCountVideo = listItem.get(0).getStatistics().getLikeCount();
-                    descVideo = listItem.get(0).getSnippet().getDescription();
-                    commentCount = listItem.get(0).getStatistics().getCommentCount();
-
-//                    listSearch = new SearchItem(urlThumbnailVideo, urlLogoChannel, titleVideo, publishAt,
-//                            titleChannel, viewCountVideo, idVideo, likeCountVideo, descVideo,
-//                            idChannel, commentCount);
-                }
-//                onClickVideoListener.OnClickItemVideo(itemVideo);
-            }
-
-            @Override
-            public void onFailure(Call<DetailVideo> call, Throwable t) {
-
-            }
-        });
-    }
+//    private void callApiDetailVideo(String idVideo) {
+//        ApiServicePlayList.apiServicePlayList.detailVideo(
+//                "snippet",
+//                "statistics",
+//                idVideo,
+//                Util.API_KEY
+//        ).enqueue(new Callback<DetailVideo>() {
+//            @Override
+//            public void onResponse(Call<DetailVideo> call, Response<DetailVideo> response) {
+//                String urlThumbnailVideo = "", titleVideo = "", titleChannel = "",
+//                        publishAt = "", viewCountVideo = "", commentCount = "",
+//                        idVideo = "", likeCountVideo = "", descVideo = "",
+//                        idChannel = "", urlLogoChannel = "";
+//
+//                DetailVideo detailVideo = response.body();
+//                if (detailVideo != null) {
+//                    ArrayList<ItemVideo> listItem = detailVideo.getItems();
+//
+//                    urlThumbnailVideo = listItem.get(0)
+//                            .getSnippet().getThumbnails()
+//                            .getHigh().getUrl();
+//
+//                    viewCountVideo = listItem.get(0).getStatistics().getViewCount();
+//                    titleVideo = listItem.get(0).getSnippet().getTitle();
+//                    titleChannel = listItem.get(0).getSnippet().getChannelTitle();
+//                    idChannel = listItem.get(0).getSnippet().getChannelId();
+//
+//                    idVideo = listItem.get(0).getId();
+//                    urlLogoChannel = "";
+//                    publishAt = listItem.get(0).getSnippet().getPublishedAt();
+////                        String dateDayDiff = Util.getTime(timeVideo);
+//
+//                    viewCountVideo = listItem.get(0).getStatistics().getViewCount();
+//                    double viewCount = Double.parseDouble(viewCountVideo);
+//                    viewCountVideo = Util.convertViewCount(viewCount);
+//
+//
+//                    likeCountVideo = listItem.get(0).getStatistics().getLikeCount();
+//                    descVideo = listItem.get(0).getSnippet().getDescription();
+//                    commentCount = listItem.get(0).getStatistics().getCommentCount();
+//
+////                    listSearch = new SearchItem(urlThumbnailVideo, urlLogoChannel, titleVideo, publishAt,
+////                            titleChannel, viewCountVideo, idVideo, likeCountVideo, descVideo,
+////                            idChannel, commentCount);
+//                }
+////                onClickVideoListener.OnClickItemVideo(itemVideo);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<DetailVideo> call, Throwable t) {
+//
+//            }
+//        });
+//    }
 }

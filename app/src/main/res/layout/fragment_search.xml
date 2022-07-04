@@ -11,10 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="0dp"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tb_nav"
+            android:id="@+id/tb_nav_search"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
@@ -25,6 +27,7 @@
                 android:id="@+id/ib_back_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/me_15dp"
                 android:src="@drawable/baseline_arrow_back_ios_new_black_24"
                 android:background="@drawable/custom_button_transparent"/>
 
@@ -32,9 +35,12 @@
                 android:id="@+id/et_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/padding_5dp"
+                android:background="@color/bg_edittext"
+                android:layout_marginEnd="@dimen/me_10dp"
                 android:paddingStart="@dimen/padding_10dp"
                 android:focusable="true"
-
+                android:focusableInTouchMode="true"
                 android:hint="@string/title_search"/>
 
         </androidx.appcompat.widget.Toolbar>

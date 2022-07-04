@@ -109,7 +109,7 @@ public class HomeFragment extends Fragment {
 
     private void setFirstData() {
         listVideoItem = null;
-        callApiPlaylist(pageToken, "20");
+        callApiPlaylist(pageToken, "10");
     }
 
     // Set propress bar load data
@@ -181,7 +181,6 @@ public class HomeFragment extends Fragment {
                                     .getSnippet().getThumbnails()
                                     .getHigh().getUrl();
                         }
-                        Log.d("anhdep", urlThumbnailVideo);
                         titleVideo = listItem.get(i).getSnippet().getTitle();
                         titleChannel = listItem.get(i).getSnippet().getChannelTitle();
                         idChannel = listItem.get(i).getSnippet().getChannelId();
