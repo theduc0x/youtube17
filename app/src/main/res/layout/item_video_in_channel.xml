@@ -8,7 +8,9 @@
     android:paddingRight="@dimen/padding_10dp"
     android:paddingTop="@dimen/padding_5dp"
     android:paddingBottom="@dimen/padding_5dp"
-    android:background="@color/custom_item_video_click"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     android:weightSum="10">
 

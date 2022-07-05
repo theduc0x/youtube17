@@ -1,6 +1,7 @@
 package com.example.youtubeapp.adapter;
 
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
     IItemOnClickVideoSearchListener onClickVideoSearchListener;
 
     ArrayList<SearchItem> listSearch;
+
+    public SearchResultsAdapter(IItemOnClickChannelListener onClickChannelListener,
+                                IItemOnClickPlayListSearchListener onCLickItemPlayListS,
+                                IItemOnClickVideoSearchListener onClickVideoSearchListener) {
+        this.onClickChannelListener = onClickChannelListener;
+        this.onCLickItemPlayListS = onCLickItemPlayListS;
+        this.onClickVideoSearchListener = onClickVideoSearchListener;
+    }
 
     public void setData(ArrayList<SearchItem> listSearch) {
         this.listSearch = listSearch;
@@ -197,7 +206,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
             String likeCount = video.getLikeCountVideo();
             String descVideo = video.getDescVideo();
             String idChannel = video.getIdChannel();
-
+            String idVideo = video.getIdVideo();
+            Log.d("idVideo", idVideo);
+            Log.d("idChannel", idChannel);
             String urlLogoChannel;
             if (video.getUrlLogoChannel().equals("")) {
                 urlLogoChannel = "https://st.quantrimang.com/photos/image/2020/07/30/Hinh-Nen-Trang-10.jpg";
@@ -216,7 +227,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 tvViewCountVideo.setText("• " + viewCountVideo + " views •");
             }
 
-            String idVideo = video.getIdVideo();
+
             clItemClick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -46,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment {
-    private String idVideoM, cmtCount;
+    public static String idVideoM = "", cmtCount = "";
     private TextView tvTotalCmtCount;
     private RecyclerView rvListComment;
     CommentYoutubeAdapter adapter;
@@ -65,14 +65,16 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
 
 
     // Khởi tạo fragment dialog với dữ liệu truyền vào là 1 CommentItem
-    public static BottomSheetDialogCommentFragment newInstance(String idVideo, String cmtCount) {
+    public static BottomSheetDialogCommentFragment newInstance(String idVideo, String cmtCounts) {
         BottomSheetDialogCommentFragment bsdCommentFragment =
                 new BottomSheetDialogCommentFragment();
 
+//            idVideoM = idVideo;
+//            cmtCount = cmtCounts;
         // Khởi tạo dialog fragment và gửi dữ liệu đi tới bước sau bằng bundle
         Bundle bundle = new Bundle();
         bundle.putString(Util.BUNDLE_EXTRA_ID_VIDEO, idVideo);
-        bundle.putString(Util.BUNDLE_EXTRA_CMT_COUNT_VIDEO, cmtCount);
+        bundle.putString(Util.BUNDLE_EXTRA_CMT_COUNT_VIDEO, cmtCounts);
         bsdCommentFragment.setArguments(bundle);
         return bsdCommentFragment;
     }
@@ -167,8 +169,6 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
             }
 
         });
-
-
 
         LinearLayoutManager linearLayoutManager =
                 new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);

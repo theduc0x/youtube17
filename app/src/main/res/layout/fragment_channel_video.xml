@@ -31,13 +31,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginStart="@dimen/ms_10dp"
                 android:orientation="horizontal"
                 android:background="@drawable/custom_button_sort_by">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/bt_sort_video_channel"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="10dp"
                     android:background="@drawable/custom_button_transparent"
                     android:textSize="@dimen/textSize_14dp"
                     android:text="@string/bt_sort_by"/>

@@ -38,7 +38,6 @@ public class BottomSheetDialogDescFragment extends BottomSheetDialogFragment {
     TextView tvTitleChannelVideo, tvLikeCountVideo, tvDesc;
     Toolbar tbCancel;
 
-
     public static BottomSheetDialogDescFragment newInstance(VideoItem item) {
         BottomSheetDialogDescFragment bottomSheetDialogDescFragment =
                 new BottomSheetDialogDescFragment();

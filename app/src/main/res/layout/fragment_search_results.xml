@@ -60,6 +60,7 @@
                         android:hint="@string/title_search"
                         android:maxLines="1"
                         android:ellipsize="end"
+                        android:textColor="@color/black"
                         android:text="ducahfjhsjahfasfsfa"/>
 
                     <ImageView

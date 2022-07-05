@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.model.itemrecycleview.SearchItem;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.fragment.VideoContainDataFragment;
 import com.example.youtubeapp.fragment.VideoContainYoutubePlayFragment;
@@ -21,6 +22,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     YouTubePlayerView ypvVideo;
     String idVideo;
     VideoItem itemVideo;
+    SearchItem itemVideoS;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +56,17 @@ public class VideoPlayActivity extends AppCompatActivity {
         Intent getVideoInfo = getIntent();
         Bundle bundle = getVideoInfo.getExtras();
         if (bundle != null) {
-            itemVideo =
-                    (VideoItem) bundle.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
-            idVideo = itemVideo.getIdVideo();
+            String key = bundle.getString(Util.EXTRA_KEY_ITEM_VIDEO);
+            if (key.equals("Search")) {
+                itemVideoS =
+                        (SearchItem) bundle.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                idVideo = itemVideoS.getIdVideo();
+            } else {
+                itemVideo =
+                        (VideoItem) bundle.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                idVideo = itemVideo.getIdVideo();
+            }
+
         }
         videoContainDataFragment.setArguments(bundle);
         transaction.replace(R.id.fl_content_data, videoContainDataFragment);

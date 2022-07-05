@@ -1,36 +1,41 @@
 package com.example.youtubeapp.fragment;
 
-import android.media.Image;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.activitys.ChannelActivity;
 import com.example.youtubeapp.activitys.MainActivity;
+import com.example.youtubeapp.activitys.VideoPlayActivity;
+import com.example.youtubeapp.activitys.VideoPlayListActivity;
 import com.example.youtubeapp.adapter.SearchResultsAdapter;
 import com.example.youtubeapp.api.ApiServicePlayList;
 import com.example.youtubeapp.model.detailvideo.DetailVideo;
 import com.example.youtubeapp.model.detailvideo.ItemVideo;
 import com.example.youtubeapp.model.infochannel.Channel;
 import com.example.youtubeapp.model.infochannel.Itemss;
-import com.example.youtubeapp.model.itemrecycleview.PlayListItem;
 import com.example.youtubeapp.model.itemrecycleview.SearchItem;
-import com.example.youtubeapp.model.itemrecycleview.VideoChannelItem;
 import com.example.youtubeapp.model.listplaylistvideochannel.Items;
 import com.example.youtubeapp.model.listplaylistvideochannel.PlayList;
 import com.example.youtubeapp.model.searchyoutube.ItemsSearch;
 import com.example.youtubeapp.model.searchyoutube.Search;
+import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
+import com.example.youtubeapp.my_interface.IItemOnClickPlayListSearchListener;
+import com.example.youtubeapp.my_interface.IItemOnClickVideoSearchListener;
 import com.example.youtubeapp.my_interface.PaginationScrollListener;
 import com.example.youtubeapp.utiliti.Util;
 
@@ -50,6 +55,7 @@ public class SearchResultsFragment extends Fragment {
     TextView tvSearch;
     MainActivity mainActivity;
     ImageView ivOpenSearch;
+    ImageButton ibBack;
 
     private boolean isLoading;
     private boolean isLastPage;
@@ -60,7 +66,9 @@ public class SearchResultsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_results, container, false);
+        removeSearchFragment();
         getBundle();
+        ibBack = view.findViewById(R.id.ib_back_search_results);
         tvSearch = view.findViewById(R.id.tv_search_results);
         mainActivity = (MainActivity) getActivity();
         ivOpenSearch = view.findViewById(R.id.iv_open_search_new);
@@ -70,7 +78,35 @@ public class SearchResultsFragment extends Fragment {
                 new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rvListSearch.setLayoutManager(linearLayoutManager);
         listItems = new ArrayList<>();
-        adapter = new SearchResultsAdapter();
+        adapter = new SearchResultsAdapter(new IItemOnClickChannelListener() {
+            @Override
+            public void onClickOpenChannel(String idChannel, String titleChannel) {
+                Intent openToChannel = new Intent(getActivity(), ChannelActivity.class);
+                openToChannel.putExtra(Util.EXTRA_ID_CHANNEL_TO_CHANNEL, idChannel);
+                openToChannel.putExtra(Util.EXTRA_TITLE_CHANNEL_TO_CHANNEL, titleChannel);
+                startActivity(openToChannel);
+            }
+        }, new IItemOnClickPlayListSearchListener() {
+            @Override
+            public void onCLickItemPlayListS(SearchItem item) {
+                Intent openToChannel = new Intent(getActivity(), VideoPlayListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Util.BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST, item);
+                bundle.putString(Util.EXTRA_KEY_ITEM_PLAYLIST, "Search");
+                openToChannel.putExtras(bundle);
+                startActivity(openToChannel);
+            }
+        }, new IItemOnClickVideoSearchListener() {
+            @Override
+            public void OnClickItemVideoS(SearchItem item) {
+                Intent toPlayVideo = new Intent(getActivity(), VideoPlayActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
+                bundle.putString(Util.EXTRA_KEY_ITEM_VIDEO, "Search");
+                toPlayVideo.putExtras(bundle);
+                startActivity(toPlayVideo);
+            }
+        });
         rvListSearch.setAdapter(adapter);
         setFirstData();
         // sự kiện cuốn recycleview
@@ -100,16 +136,35 @@ public class SearchResultsFragment extends Fragment {
                 mainActivity.addFragmentSearch("");
             }
         });
-
+        // Quay trở lại phần search lúc đầu
         tvSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainActivity.addFragmentSearch(tvSearch.getText().toString());
             }
         });
+        // Nút quay trở lại
+        ibBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.onBackPressed();
+            }
+        });
 
         return view;
     }
+//  Xóa fragment search để khi quay trở lại thì trở lại trang main
+    public void removeSearchFragment() {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        SearchFragment searchFragment
+                = (SearchFragment) getChildFragmentManager().findFragmentByTag("fragSearch");
+        if (searchFragment != null) {
+            transaction.remove(this);
+            transaction.commit();
+        }
+    };
+
+
 
     private void setFirstData() {
         listItems = null;
@@ -165,10 +220,13 @@ public class SearchResultsFragment extends Fragment {
                             callApiChannelFull(idChannel, listAdd, i);
                         } else if (kindType.equals("youtube#playlist")) {
                             idPlayList = listItem.get(i).getId().getPlaylistId();
+                            idChannel = listItem.get(i).getSnippet().getChannelId();
                             callApiPlayList(idPlayList, listAdd, i);
                         } else if (kindType.equals("youtube#video")) {
                             idVideo = listItem.get(i).getId().getVideoId();
+                            idChannel = listItem.get(i).getSnippet().getChannelId();
                             callApiViewCountVideo(idVideo, listAdd, i);
+                            Log.d("duc1123", idVideo);
                         }
 
                         titleChannel = listItem.get(i).getSnippet().getChannelTitle();

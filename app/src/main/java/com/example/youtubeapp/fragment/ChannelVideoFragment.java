@@ -3,6 +3,7 @@ package com.example.youtubeapp.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,9 +13,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.my_interface.IItemOnClickSortListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.activitys.VideoPlayActivity;
 import com.example.youtubeapp.adapter.VideoChannelAdapter;
@@ -34,9 +37,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChannelVideoFragment extends Fragment {
+public class ChannelVideoFragment extends Fragment implements IItemOnClickSortListener {
     RecyclerView rvListVideo;
+    LinearLayout llOpenSort;
     ArrayList<VideoChannelItem> listItems;
+    AppCompatButton btClick;
     ArrayList<VideoChannelItem> list;
     VideoChannelAdapter adapter;
     String idChannel;
@@ -44,7 +49,8 @@ public class ChannelVideoFragment extends Fragment {
     private boolean isLoading;
     private boolean isLastPage;
     private int totalPage = 5;
-    private int currenPage = 1;
+    private int currentPage = 1;
+    private int loadPage = 1;
 
     Search video;
     @Override
@@ -52,6 +58,8 @@ public class ChannelVideoFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_channel_video, container, false);
         rvListVideo = view.findViewById(R.id.rv_list_video_channel);
+        btClick = view.findViewById(R.id.bt_sort_video_channel);
+        llOpenSort = view.findViewById(R.id.ll_sort_video_channel);
         listItems = new ArrayList<>();
         // lấy idChannel
         getBundle();
@@ -65,6 +73,7 @@ public class ChannelVideoFragment extends Fragment {
                 Intent toPlayVideo = new Intent(getActivity(), VideoPlayActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
+                bundle.putString(Util.EXTRA_KEY_ITEM_VIDEO, "Video");
                 toPlayVideo.putExtras(bundle);
                 startActivity(toPlayVideo);
             }
@@ -78,7 +87,7 @@ public class ChannelVideoFragment extends Fragment {
             @Override
             public void loadMoreItem() {
                 isLoading = true;
-                currenPage += 1;
+                currentPage += 1;
                 loadNextPage();
             }
             @Override
@@ -91,16 +100,23 @@ public class ChannelVideoFragment extends Fragment {
             }
         });
 
+        btClick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickOpenBottomSheetDialogFragment();
+            }
+        });
+
         return view;
     }
 //     Load data page one
     private void setFirstData() {
         listItems = null;
-        callApiVideoChannel(pageToken, idChannel, "10");
+        callApiVideoChannel(pageToken, idChannel, "10", "date");
     }
     // Set propress bar load data
     private void setProgressBar() {
-        if (currenPage < totalPage) {
+        if (currentPage < totalPage) {
             adapter.addFooterLoading();
         } else {
             isLastPage = true;
@@ -111,21 +127,29 @@ public class ChannelVideoFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getContext(), "Load Page" + currenPage, Toast.LENGTH_SHORT).show();
-                callApiVideoChannel(pageToken, idChannel, "10");
+                Toast.makeText(getContext(), "Load Page" + currentPage, Toast.LENGTH_SHORT).show();
+
                 isLoading = false;
+
+                if (loadPage == 1) {
+                    callApiVideoChannel(pageToken, idChannel, "10", "date");
+                    isLoading = false;
+                } else if (loadPage == 2) {
+                    callApiVideoChannel(pageToken, idChannel, "10", "viewCount");
+                    isLoading = false;
+                }
             }
         },1000);
     }
 
-    private void callApiVideoChannel(String nextPageToken, String channelId, String maxResults) {
+    private void callApiVideoChannel(String nextPageToken, String channelId, String maxResults, String order) {
         list = new ArrayList<>();
         ApiServicePlayList.apiServicePlayList.videoUpdateNews(
                 nextPageToken,
                 "snippet",
                 "id",
                 channelId,
-                "date",
+                order,
                 "video",
                 Util.API_KEY,
                 maxResults
@@ -213,10 +237,34 @@ public class ChannelVideoFragment extends Fragment {
         });
     }
 
+    private void clickOpenBottomSheetDialogFragment() {
+        BottomSheetDiaLogSortVideoFragment bottomSheetDiaLogSortVideoFragment =
+                BottomSheetDiaLogSortVideoFragment.newInstance(this);
+        bottomSheetDiaLogSortVideoFragment.show(getChildFragmentManager(),
+                bottomSheetDiaLogSortVideoFragment.getTag());
+
+    }
+
     private void getBundle() {
         Bundle bundle = getArguments();
         if (bundle != null) {
             idChannel = bundle.getString(Util.EXTRA_ID_CHANNEL_TO_CHANNEL_FROM_ADAPTER);
         }
+    }
+
+    @Override
+    public void onClickSortDate() {
+         currentPage = 1;
+         loadPage = 1;
+         listItems = null;
+         callApiVideoChannel("", idChannel, "10", "date");
+    }
+
+    @Override
+    public void onClickSortMostPopular() {
+        currentPage = 1;
+        loadPage = 2;
+        listItems = null;
+        callApiVideoChannel("", idChannel, "10", "viewCount");
     }
 }

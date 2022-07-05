@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.model.itemrecycleview.SearchItem;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.activitys.ChannelActivity;
 import com.example.youtubeapp.api.ApiServicePlayList;
@@ -172,6 +173,17 @@ public class VideoContainDataFragment extends Fragment {
         // Nhận dữ liệu bundle và set dữ liệu lên các view
         Bundle bundleReceive = getArguments();
         if (bundleReceive != null) {
+            String key = bundle.getString(Util.EXTRA_KEY_ITEM_VIDEO);
+            if (key.equals("Search")) {
+                itemVideoS =
+                        (SearchItem) bundle.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                idVideo = itemVideoS.getIdVideo();
+            } else {
+                itemVideo =
+                        (VideoItem) bundle.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                idVideo = itemVideo.getIdVideo();
+            }
+        }
             itemVideo =
                     (VideoItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
             idVideo = itemVideo.getIdVideo();

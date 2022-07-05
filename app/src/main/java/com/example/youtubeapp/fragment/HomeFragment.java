@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.activitys.ChannelActivity;
+import com.example.youtubeapp.activitys.MainActivity;
 import com.example.youtubeapp.model.itemrecycleview.SearchItem;
 import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
 import com.example.youtubeapp.my_interface.PaginationScrollListener;
@@ -41,6 +42,7 @@ public class HomeFragment extends Fragment {
     public static final String TAG = HomeFragment.class.getName();
     private RecyclerView rvItemVideo;;
     public static VideoYoutubeAdapter adapter;
+    MainActivity mainActivity;
     public int a = 1;
     ArrayList<VideoItem> listVideoItem;
     ArrayList<VideoItem> listAdd;
@@ -56,6 +58,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         listVideoItem = new ArrayList<>();
         rvItemVideo = view.findViewById(R.id.rv_item_video);
+        mainActivity = (MainActivity) getActivity();
 
         // Khi click vào các item video sẽ mở activity play để chạy video
         adapter = new VideoYoutubeAdapter(new IItemOnClickVideoListener() {
@@ -64,6 +67,7 @@ public class HomeFragment extends Fragment {
                 Intent toPlayVideo = new Intent(getActivity(), VideoPlayActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
+                bundle.putString(Util.EXTRA_KEY_ITEM_VIDEO, "Video");
                 toPlayVideo.putExtras(bundle);
                 startActivity(toPlayVideo);
             }
@@ -74,6 +78,7 @@ public class HomeFragment extends Fragment {
                 openToChannel.putExtra(Util.EXTRA_ID_CHANNEL_TO_CHANNEL, idChannel);
                 openToChannel.putExtra(Util.EXTRA_TITLE_CHANNEL_TO_CHANNEL, titleChannel);
                 startActivity(openToChannel);
+//                    mainActivity.addFragmentChannel(idChannel, titleChannel);
             }
         });
 

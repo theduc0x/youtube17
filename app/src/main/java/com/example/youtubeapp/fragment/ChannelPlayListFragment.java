@@ -3,15 +3,20 @@ package com.example.youtubeapp.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.youtubeapp.R;
@@ -34,6 +39,8 @@ import retrofit2.Response;
 public class ChannelPlayListFragment extends Fragment {
     RecyclerView rvPlayList;
     PlayListAdapter adapter;
+    LinearLayout llOpenSort;
+    AppCompatButton btOpenSort;
     ArrayList<PlayListItem> listItems;
     ArrayList<PlayListItem> listAdd;
     String idChannel;
@@ -42,12 +49,15 @@ public class ChannelPlayListFragment extends Fragment {
     private boolean isLastPage;
     private int totalPage = 5;
     private int currenPage = 1;
+    private int loadPage = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_channel_play_list, container, false);
         rvPlayList = view.findViewById(R.id.rv_list_playlist_channel);
+        llOpenSort = view.findViewById(R.id.ll_sort_playlist_channel);
+        btOpenSort = view.findViewById(R.id.bt_sort_playlist_channel);
         listItems = new ArrayList<>();
         getBundle();
 
@@ -60,6 +70,7 @@ public class ChannelPlayListFragment extends Fragment {
                 Intent openToChannel = new Intent(getActivity(), VideoPlayListActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Util.BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST, item);
+                bundle.putString(Util.EXTRA_KEY_ITEM_PLAYLIST, "Channel");
                 openToChannel.putExtras(bundle);
                 startActivity(openToChannel);
             }
@@ -108,8 +119,16 @@ public class ChannelPlayListFragment extends Fragment {
             @Override
             public void run() {
                 Toast.makeText(getContext(), "Load Page" + currenPage, Toast.LENGTH_SHORT).show();
-                callApiPlayList(pageToken, idChannel, "10");
+
                 isLoading = false;
+
+                if (loadPage == 1) {
+                    callApiPlayList(pageToken, idChannel, "10");
+                    isLoading = false;
+                } else if (loadPage == 2) {
+                    callApiPlayList(pageToken, idChannel, "10");
+                    isLoading = false;
+                }
             }
         },1000);
     }
@@ -185,11 +204,43 @@ public class ChannelPlayListFragment extends Fragment {
             }
         });
     }
+
+    private void popupMenu() {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), llOpenSort, Gravity.BOTTOM);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_sort_playlist,
+                popupMenu.getMenu());
+        // Gọi lại 1 hàm setData trong adapter
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.mn_date_newest:
+                        currenPage = 1;
+//                        LoadPage = 1;
+//                        listCmtItem = null;
+//                        callApiComment(idVideoM, "", "relevance", "10");
+//                        adapter.setData(listCmtItem);
+                        break;
+                    case R.id.mn_last_video_add:
+                        currenPage = 1;
+//                        LoadPage = 2;
+//                        listCmtItem = null;
+//                        callApiComment(idVideoM, "", "time", "10");
+//                        adapter.setData(listCmtItem);
+                        break;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
     private void getBundle() {
         Bundle bundle = getArguments();
         if (bundle != null) {
             idChannel = bundle.getString(Util.EXTRA_ID_CHANNEL_TO_CHANNEL_FROM_ADAPTER);
         }
     }
+
+
 
 }

@@ -1,6 +1,8 @@
 package com.example.youtubeapp.model.itemrecycleview;
 
-public class SearchItem {
+import java.io.Serializable;
+
+public class SearchItem implements Serializable {
     private String kindType;
     // channel
     private String idChannel;

@@ -1,11 +1,13 @@
 package com.example.youtubeapp.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,8 +20,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -61,7 +65,8 @@ public class SearchFragment extends Fragment {
         getBundle();
         etSearch.setText(how);
         etSearch.requestFocus();
-        etSearch.setFocusable(true);
+//        InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         mainActivity = (MainActivity) getActivity();
         listHint = new ArrayList<>();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
@@ -76,6 +81,7 @@ public class SearchFragment extends Fragment {
                 new IItemOnClickSearchListener() {
             @Override
             public void onClickSearchListener(String q) {
+//                removeSearchFragment();
                 mainActivity.addFragmentSearchResults(q);
                 etSearch.setText(q);
             }
@@ -125,9 +131,6 @@ public class SearchFragment extends Fragment {
         });
         return view;
     }
-    public void setToolBar() {
-        mainActivity.setToolBarMainVisible();
-    }
 
     private void initView(View view) {
         ibBack = view.findViewById(R.id.ib_back_search);
@@ -141,10 +144,16 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
-                mainActivity.setToolBarMainVisible();
             }
         });
     }
+
+//    public void removeSearchFragment() {
+//        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+//            transaction.remove(this);
+//            transaction.commit();
+//        getChildFragmentManager().popBackStack();
+//    }
 
 
 

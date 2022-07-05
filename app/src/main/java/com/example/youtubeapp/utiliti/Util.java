@@ -1,11 +1,14 @@
 package com.example.youtubeapp.utiliti;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
+import com.example.youtubeapp.activitys.ChannelActivity;
 import com.example.youtubeapp.api.ApiServicePlayList;
 import com.example.youtubeapp.model.itemrecycleview.CommentItem;
 import com.example.youtubeapp.model.itemrecycleview.RepliesCommentItem;
@@ -25,7 +28,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Util {
-    final public static String API_KEY = "AIzaSyDMV8e1aPB63Xwgi506dtDyzf6PrlQWCrw";
+    final public static String API_KEY = "AIzaSyAB7ZJc0YdbzRP6AD-DA3gk9-tPvfnrBTI";
     final public static String ID_PLAYLIST = "PL8A83124F1D79BD4F";
     final public static String urlListVideoMostPopular = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=statistics&chart=mostPopular&locale=vn&regionCode=vn&key=AIzaSyDkEdU_hnItFhVO0yDBS758w4FFDIWDuzg&maxResults=50";
     public static int REQUEST_CODE_VIDEO = 123;
@@ -42,6 +45,8 @@ public class Util {
     public static String BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST = "to play list";
     public static String BUNDLE_EXTRA_TEXT_EDITTEXT = "edittext";
     public static String BUNDLE_EXTRA_Q = "extra q";
+    public static String EXTRA_KEY_ITEM_PLAYLIST = "key playlist";
+    public static String EXTRA_KEY_ITEM_VIDEO = "key video";
 //    public static ArrayList<VideoItem> listVideoItem = null;
 //    public static ArrayList<CommentItem> listCmtItem = null;
     public static ArrayList<RepliesCommentItem> listReplies = null;
@@ -108,6 +113,5 @@ public class Util {
         }
         return days;
     }
-
 
 }

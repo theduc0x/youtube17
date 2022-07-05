@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.model.itemrecycleview.SearchItem;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.adapter.PlayListItemVideoChannelAdapter;
 import com.example.youtubeapp.api.ApiServicePlayList;
@@ -151,11 +152,21 @@ public class VideoPlayListActivity extends AppCompatActivity {
         Intent getDataPlayList = getIntent();
         Bundle bundleRe = getDataPlayList.getExtras();
         if (bundleRe != null) {
-            PlayListItem item = (PlayListItem) bundleRe.getSerializable(Util.BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST);
-            idPlayList = item.getIdPlayList();
-            videoCount = item.getVideoCount();
-            titlePlayList = item.getTitleVideo();
-            titleChannel = item.getTitleChannel();
+            String key = bundleRe.getString(Util.EXTRA_KEY_ITEM_PLAYLIST);
+            if (key.equals("Search")) {
+                SearchItem item = (SearchItem) bundleRe.getSerializable(Util.BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST);
+                idPlayList = item.getIdPlayList();
+                videoCount = item.getVideoCount();
+                titlePlayList = item.getTvTitleVideo();
+                titleChannel = item.getTitleChannel();
+            } else {
+                PlayListItem item = (PlayListItem) bundleRe.getSerializable(Util.BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST);
+                idPlayList = item.getIdPlayList();
+                videoCount = item.getVideoCount();
+                titlePlayList = item.getTitleVideo();
+                titleChannel = item.getTitleChannel();
+            }
+
         }
     }
 

@@ -27,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.api.ApiServiceHintSearch;
+import com.example.youtubeapp.fragment.ChannelDetailFragment;
 import com.example.youtubeapp.fragment.ExploreFragment;
 import com.example.youtubeapp.fragment.HomeFragment;
 import com.example.youtubeapp.fragment.LibraryFragment;
@@ -189,8 +190,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        setToolBarMainVisible();
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragSearch");
+        HomeFragment fragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("fragHome");
+        if (fragment != null && fragment.isVisible()) {
+            setToolBarMainVisible();
+        }
 
     }
 
@@ -199,6 +202,7 @@ public class MainActivity extends AppCompatActivity
         bnvFragment.setVisibility(View.VISIBLE);
 //        removeFragmentSearch();
         SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+        getSupportFragmentManager().popBackStack();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Bundle bundle = new Bundle();
         bundle.putString(Util.BUNDLE_EXTRA_Q, q);
@@ -206,8 +210,24 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.fl_content, searchResultsFragment, "fragSearchRe");
         fragmentTransaction.addToBackStack("SearchFragmentRe");
         fragmentTransaction.commit();
-
     }
+
+//    public void addFragmentChannel(String idChannel, String titleChannel) {
+//        tbNav.setVisibility(View.GONE);
+//        bnvFragment.setVisibility(View.VISIBLE);
+////        removeFragmentSearch();
+//        ChannelDetailFragment channelDetailFragment = new ChannelDetailFragment();
+////        getSupportFragmentManager().popBackStack();
+//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//        Bundle bundle = new Bundle();
+//        bundle.putString("ID_CHANNEL", idChannel);
+//        bundle.putString("TITLE_CHANNEL", titleChannel);
+//        channelDetailFragment.setArguments(bundle);
+//        fragmentTransaction.replace(R.id.fl_content, channelDetailFragment, "fragChannelDetail");
+//        fragmentTransaction.addToBackStack("Channel");
+//        fragmentTransaction.commit();
+//    }
+
 
 //    private void removeFragmentSearch() {
 //        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -223,17 +243,6 @@ public class MainActivity extends AppCompatActivity
 //        }
 //    }
 
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        setToolBarMainVisible();
-//    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        setToolBarMainVisible();
-    }
 
     public void setToolBarMainVisible() {
         bnvFragment.setVisibility(View.VISIBLE);

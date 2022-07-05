@@ -8,6 +8,9 @@
         android:id="@+id/rl_open_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
         android:paddingBottom="20dp">
 
         <de.hdodenhof.circleimageview.CircleImageView

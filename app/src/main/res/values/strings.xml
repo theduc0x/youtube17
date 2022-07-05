@@ -15,7 +15,7 @@
     <string name="tv_editor">(editor)</string>
     <string name="search_channel">Search</string>
     <string name="option_channel">Option</string>
-    <string name="title_sort_playlist">Ngày thêm (mới nhất)</string>
+    <string name="title_sort_playlist">sort by</string>
     <string name="text_test">Nhạc Chill Học Bài - Những Bản Nhạc Baroque Giúp Tập Trung Học Tập - Nhạc Không Lời Thư Giãn #14</string>
     <string name="title_activity_video_play_list">VideoPlayListActivity</string>
     <!-- Strings used for fragments for navigation -->
