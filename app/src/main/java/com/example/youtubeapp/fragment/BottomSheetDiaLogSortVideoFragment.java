@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -14,12 +15,14 @@ import androidx.annotation.Nullable;
 
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.my_interface.IItemOnClickSortListener;
+import com.example.youtubeapp.utiliti.Util;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class BottomSheetDiaLogSortVideoFragment extends BottomSheetDialogFragment {
     LinearLayout llSortNew, llSortPopular, llCancel;
     IItemOnClickSortListener onClickSortListener;
+    ImageView ivSortDate, ivSortMost;
     public static ChannelVideoFragment fragmentC;
 
     public static BottomSheetDiaLogSortVideoFragment newInstance(ChannelVideoFragment fragment) {
@@ -58,6 +61,13 @@ public class BottomSheetDiaLogSortVideoFragment extends BottomSheetDialogFragmen
 //        intMain(viewDialog);
 //        setDataDesc();
         initView(viewDialog);
+        if (Util.REQUEST_CODE_SORT_VIDEO == 111) {
+            ivSortDate.setVisibility(View.VISIBLE);
+            ivSortMost.setVisibility(View.INVISIBLE);
+        } else {
+            ivSortDate.setVisibility(View.INVISIBLE);
+            ivSortMost.setVisibility(View.VISIBLE);
+        }
 //        bottomSheetDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
 //                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
 //        bottomSheetDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -72,6 +82,7 @@ public class BottomSheetDiaLogSortVideoFragment extends BottomSheetDialogFragmen
             @Override
             public void onClick(View v) {
                 onClickSortListener.onClickSortDate();
+                Util.REQUEST_CODE_SORT_VIDEO = 111;
                 bottomSheetDialog.dismiss();
             }
         });
@@ -80,6 +91,7 @@ public class BottomSheetDiaLogSortVideoFragment extends BottomSheetDialogFragmen
             @Override
             public void onClick(View v) {
                 onClickSortListener.onClickSortMostPopular();
+                Util.REQUEST_CODE_SORT_VIDEO = 112;
                 bottomSheetDialog.dismiss();
             }
         });
@@ -104,5 +116,7 @@ public class BottomSheetDiaLogSortVideoFragment extends BottomSheetDialogFragmen
         llSortNew = view.findViewById(R.id.ll_sort_date_newest);
         llSortPopular = view.findViewById(R.id.ll_sort_most_popular);
         llCancel = view.findViewById(R.id.ll_cancel_sort);
+        ivSortDate = view.findViewById(R.id.iv_check_sort_date);
+        ivSortMost = view.findViewById(R.id.iv_check_sort_most);
     }
 }

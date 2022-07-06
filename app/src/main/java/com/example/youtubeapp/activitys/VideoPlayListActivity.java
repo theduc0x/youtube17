@@ -77,6 +77,7 @@ public class VideoPlayListActivity extends AppCompatActivity {
                 Intent toPlayVideo = new Intent(VideoPlayListActivity.this, VideoPlayActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
+                bundle.putString(Util.EXTRA_KEY_ITEM_VIDEO, "Video");
                 toPlayVideo.putExtras(bundle);
                 startActivity(toPlayVideo);
             }
@@ -142,7 +143,6 @@ public class VideoPlayListActivity extends AppCompatActivity {
         llOpenVideo = findViewById(R.id.ll_open_video_play_from_listplay);
     }
     private void setData() {
-        tvTitlePlayListTB.setText(titlePlayList);
         tvTitlePlayList.setText(titlePlayList);
         tvVideoCount.setText(videoCount + " video");
         tvTitleChannel.setText(titleChannel);
@@ -156,7 +156,7 @@ public class VideoPlayListActivity extends AppCompatActivity {
             if (key.equals("Search")) {
                 SearchItem item = (SearchItem) bundleRe.getSerializable(Util.BUNDLE_EXTRA_PLAY_LIST_TO_VIDEO_PLAY_LIST);
                 idPlayList = item.getIdPlayList();
-                videoCount = item.getVideoCount();
+                videoCount = item.getVideoCountPlayList();
                 titlePlayList = item.getTvTitleVideo();
                 titleChannel = item.getTitleChannel();
             } else {
@@ -210,7 +210,7 @@ public class VideoPlayListActivity extends AppCompatActivity {
                             urlThumbnails = listItem.get(i).getSnippet()
                                     .getThumbnails().getHigh().getUrl();
                         } else {
-                            urlThumbnails = "https://st.quantrimang.com/photos/image/2020/07/30/Hinh-Nen-Trang-10.jpg";
+                            urlThumbnails = getString(R.string.url_image_transparent);
                         }
                             callApiViewCountVideo(idVideo, listAdd, i);
                         titleChannel = listItem.get(i).getSnippet().getChannelTitle();
@@ -239,7 +239,7 @@ public class VideoPlayListActivity extends AppCompatActivity {
             }
         });
     }
-
+    // Lấy view của video
     private void callApiViewCountVideo(String idVideo, ArrayList<ItemVideoInPlayList> listItemV,
                                        int pos) {
         ApiServicePlayList.apiServicePlayList.detailVideo(

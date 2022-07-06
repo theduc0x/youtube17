@@ -270,7 +270,6 @@ public class SearchResultsFragment extends Fragment {
 
                 }
             }
-
             @Override
             public void onFailure(Call<Search> call, Throwable t) {
 

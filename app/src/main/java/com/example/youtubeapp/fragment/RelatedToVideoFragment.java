@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.model.itemrecycleview.SearchItem;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.activitys.VideoPlayActivity;
 import com.example.youtubeapp.adapter.RelatedVideoAdapter;
@@ -36,6 +37,7 @@ public class RelatedToVideoFragment extends Fragment {
     RelatedVideoAdapter adapter;
     RecyclerView rvRelatedVideo;
     VideoItem itemVideo;
+    SearchItem itemVideoS;
     String idVideoRe = "";
     String pageTokenTo = "";
     Search search;
@@ -47,32 +49,40 @@ public class RelatedToVideoFragment extends Fragment {
         initView(view);
         listItems = new ArrayList<>();
         Bundle bundleRe = getArguments();
-            itemVideo =
-                    (VideoItem) bundleRe.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
-            idVideoRe = itemVideo.getIdVideo();
-        callApiRelatedVideo("", idVideoRe, "10");
-
-
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
-        RecyclerView.ItemDecoration decoration =
-                new DividerItemDecoration(getActivity(), RecyclerView.VERTICAL);
-        rvRelatedVideo.setLayoutManager(linearLayoutManager);
-        adapter = new RelatedVideoAdapter(rvRelatedVideo, listItems, new IItemOnClickVideoListener() {
-            @Override
-            public void OnClickItemVideo(VideoItem item) {
-                Intent toPlayVideo = new Intent(getActivity(), VideoPlayActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
-                toPlayVideo.putExtras(bundle);
-                startActivity(toPlayVideo);
+        if (bundleRe != null) {
+            String key = bundleRe.getString(Util.EXTRA_KEY_ITEM_VIDEO);
+            if (key.equals("Search")) {
+                itemVideoS =
+                        (SearchItem) bundleRe.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                idVideoRe = itemVideoS.getIdVideo();
+            } else {
+                itemVideo =
+                        (VideoItem) bundleRe.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                idVideoRe = itemVideo.getIdVideo();
             }
-        });
-        rvRelatedVideo.addItemDecoration(decoration);
-        rvRelatedVideo.setAdapter(adapter);
+            callApiRelatedVideo("", idVideoRe, "10");
+        }
 
-        return view;
-    }
+            LinearLayoutManager linearLayoutManager =
+                    new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+            RecyclerView.ItemDecoration decoration =
+                    new DividerItemDecoration(getActivity(), RecyclerView.VERTICAL);
+            rvRelatedVideo.setLayoutManager(linearLayoutManager);
+            adapter = new RelatedVideoAdapter(rvRelatedVideo, listItems, new IItemOnClickVideoListener() {
+                @Override
+                public void OnClickItemVideo(VideoItem item) {
+                    Intent toPlayVideo = new Intent(getActivity(), VideoPlayActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
+                    toPlayVideo.putExtras(bundle);
+                    startActivity(toPlayVideo);
+                }
+            });
+            rvRelatedVideo.addItemDecoration(decoration);
+            rvRelatedVideo.setAdapter(adapter);
+
+            return view;
+        }
 
     private void initView(View view) {
         rvRelatedVideo = view.findViewById(R.id.rv_list_related_video);

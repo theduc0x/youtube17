@@ -87,7 +87,7 @@ public class PlayListItemVideoChannelAdapter extends RecyclerView.Adapter<Recycl
                     viewHolder.tvViewCount.setText("0");
                 } else {
                     viewHolder.tvViewCount.setText(
-                            Util.convertViewCount(Double.parseDouble(item.getViewCountVideo())));
+                            Util.convertViewCount(Double.parseDouble(item.getViewCountVideo())) +" ");
                 }
                 String idVideo = item.getIdVideo();
 

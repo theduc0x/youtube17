@@ -121,7 +121,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/civ_image_logo_channel">
+            android:layout_toRightOf="@id/civ_image_logo_channel"
+            android:layout_toLeftOf="@+id/bt_subscribe">
 
             <TextView
                 android:id="@+id/tv_title_channel_video"
@@ -131,6 +132,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="@color/grey"
                 android:textSize="15dp"
                 android:textStyle="bold" />

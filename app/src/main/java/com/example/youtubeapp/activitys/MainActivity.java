@@ -8,27 +8,15 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.youtubeapp.R;
-import com.example.youtubeapp.api.ApiServiceHintSearch;
-import com.example.youtubeapp.fragment.ChannelDetailFragment;
-import com.example.youtubeapp.fragment.ExploreFragment;
+import com.example.youtubeapp.fragment.ShortsFragment;
 import com.example.youtubeapp.fragment.HomeFragment;
 import com.example.youtubeapp.fragment.LibraryFragment;
 import com.example.youtubeapp.fragment.NotificationFragment;
@@ -39,21 +27,8 @@ import com.example.youtubeapp.utiliti.Util;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Random;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class MainActivity extends AppCompatActivity
         implements SwipeRefreshLayout.OnRefreshListener {
@@ -103,7 +78,7 @@ public class MainActivity extends AppCompatActivity
                         }
                         break;
                     case R.id.mn_explore:
-                        ExploreFragment exploreFragment = new ExploreFragment();
+                        ShortsFragment exploreFragment = new ShortsFragment();
                         item.setChecked(true);
                         selectFragment(exploreFragment);
                         break;

@@ -26,28 +26,31 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/ll_sort_video_channel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="@dimen/ms_10dp"
-                android:orientation="horizontal"
-                android:background="@drawable/custom_button_sort_by">
+        <LinearLayout
+            android:id="@+id/ll_sort_video_channel"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_marginStart="@dimen/ms_10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/custom_button_sort_by"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/bt_sort_video_channel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@drawable/custom_button_transparent"
-                    android:textSize="@dimen/textSize_14dp"
-                    android:text="@string/bt_sort_by"/>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/baseline_keyboard_arrow_down_black_36"/>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_sort_video_channel"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="10dp"
+                android:text="@string/bt_sort_by"
+                android:textColor="@color/black"
+                android:textSize="@dimen/textSize_14dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/baseline_keyboard_arrow_down_black_36" />
+        </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_list_video_channel"

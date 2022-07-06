@@ -13,11 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.youtubeapp.R;
-import com.example.youtubeapp.fragment.ExploreFragment;
 import com.example.youtubeapp.fragment.HomeFragment;
-import com.example.youtubeapp.fragment.LibraryFragment;
-import com.example.youtubeapp.fragment.NotificationFragment;
-import com.example.youtubeapp.fragment.SubcriptionFragment;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.adapter.ViewPagerChannelAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -100,8 +96,8 @@ public class ChannelActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.mn_home:
-                        getSupportFragmentManager().popBackStack("alo123", 0);
+                    case R.id.mn_home_channel:
+                        getSupportFragmentManager().popBackStack(HomeFragment.TAG, 0);
                         break;
                     case R.id.mn_explore:
 

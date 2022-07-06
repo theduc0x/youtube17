@@ -30,4 +30,9 @@
     <dimen name="pe_10dp">10dp</dimen>
     <dimen name="action_button_padding">4dp</dimen>
     <dimen name="padding_20dp">20dp</dimen>
+    <dimen name="mb_20dp">20dp</dimen>
+    <dimen name="textSize_17dp">17dp</dimen>
+    <dimen name="iv_width_40dp">40dp</dimen>
+    <dimen name="iv_height_40dp">40dp</dimen>
+    <dimen name="mb_short_item_50dp">25dp</dimen>
 </resources>

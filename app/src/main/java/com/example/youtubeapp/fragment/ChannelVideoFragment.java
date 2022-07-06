@@ -1,5 +1,6 @@
 package com.example.youtubeapp.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.youtubeapp.R;
@@ -41,7 +43,7 @@ public class ChannelVideoFragment extends Fragment implements IItemOnClickSortLi
     RecyclerView rvListVideo;
     LinearLayout llOpenSort;
     ArrayList<VideoChannelItem> listItems;
-    AppCompatButton btClick;
+    TextView tvClickName;
     ArrayList<VideoChannelItem> list;
     VideoChannelAdapter adapter;
     String idChannel;
@@ -58,7 +60,7 @@ public class ChannelVideoFragment extends Fragment implements IItemOnClickSortLi
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_channel_video, container, false);
         rvListVideo = view.findViewById(R.id.rv_list_video_channel);
-        btClick = view.findViewById(R.id.bt_sort_video_channel);
+        tvClickName = view.findViewById(R.id.tv_sort_video_channel);
         llOpenSort = view.findViewById(R.id.ll_sort_video_channel);
         listItems = new ArrayList<>();
         // lấy idChannel
@@ -100,7 +102,7 @@ public class ChannelVideoFragment extends Fragment implements IItemOnClickSortLi
             }
         });
 
-        btClick.setOnClickListener(new View.OnClickListener() {
+        llOpenSort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 clickOpenBottomSheetDialogFragment();
@@ -150,7 +152,9 @@ public class ChannelVideoFragment extends Fragment implements IItemOnClickSortLi
                 "id",
                 channelId,
                 order,
+                null,
                 "video",
+                null,
                 Util.API_KEY,
                 maxResults
         ).enqueue(new Callback<Search>() {
@@ -252,19 +256,25 @@ public class ChannelVideoFragment extends Fragment implements IItemOnClickSortLi
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onClickSortDate() {
          currentPage = 1;
          loadPage = 1;
          listItems = null;
          callApiVideoChannel("", idChannel, "10", "date");
+         tvClickName.setText("SORT BY");
+        tvClickName.setTextColor(R.color.black);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onClickSortMostPopular() {
         currentPage = 1;
         loadPage = 2;
         listItems = null;
         callApiVideoChannel("", idChannel, "10", "viewCount");
+        tvClickName.setText("MOST POPULAR");
+        tvClickName.setTextColor(R.color.white);
     }
 }

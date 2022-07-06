@@ -118,7 +118,9 @@ public interface ApiServicePlayList {
             @Query("part") String partId,
             @Query("channelId") String channelId,
             @Query("order") String order,
+            @Query("q") String q,
             @Query("type") String typeVideo,
+            @Query("regionCode") String regionCode,
             @Query("key") String key,
             @Query("maxResults") String maxResults);
 
@@ -151,6 +153,14 @@ public interface ApiServicePlayList {
     // list dữ liệu tìm kiếm
     @GET("youtube/v3/search")
     Call<Search> searchList(
+            @Query("pageToken") String pageToken,
+            @Query("part") String part,
+            @Query("q") String q,
+            @Query("key") String key,
+            @Query("maxResults") String maxResults);
+
+    @GET("youtube/v3/search")
+    Call<Search> searchListShorts(
             @Query("pageToken") String pageToken,
             @Query("part") String part,
             @Query("q") String q,

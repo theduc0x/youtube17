@@ -53,6 +53,7 @@ public class VideoContainDataFragment extends Fragment {
     String likeCount, commentCount;
     String descVideo, idChannel,dateDayDiff;
     VideoItem itemVideo;
+    SearchItem itemVideoS;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -131,16 +132,18 @@ public class VideoContainDataFragment extends Fragment {
                 Comment comment = response.body();
                 if (comment != null) {
                     ArrayList<ItemsComment> listItem = comment.getItems();
-                    authorLogoUrl = listItem.get(0).getSnippet()
-                            .getTopLevelComment().getSnippet()
-                            .getAuthorProfileImageUrl();
+                    if (listItem.get(0) != null) {
+                        authorLogoUrl = listItem.get(0).getSnippet()
+                                .getTopLevelComment().getSnippet()
+                                .getAuthorProfileImageUrl();
 
-                    displayContentCmt = listItem.get(0).getSnippet()
-                            .getTopLevelComment().getSnippet()
-                            .getTextDisplay();
+                        displayContentCmt = listItem.get(0).getSnippet()
+                                .getTopLevelComment().getSnippet()
+                                .getTextDisplay();
 
-                    Picasso.get().load(authorLogoUrl).into(civLogoUser);
-                    tvCmtContent.setText(displayContentCmt);
+                        Picasso.get().load(authorLogoUrl).into(civLogoUser);
+                        tvCmtContent.setText(displayContentCmt);
+                    }
                 }
             }
 
@@ -173,29 +176,37 @@ public class VideoContainDataFragment extends Fragment {
         // Nhận dữ liệu bundle và set dữ liệu lên các view
         Bundle bundleReceive = getArguments();
         if (bundleReceive != null) {
-            String key = bundle.getString(Util.EXTRA_KEY_ITEM_VIDEO);
+            String key = bundleReceive.getString(Util.EXTRA_KEY_ITEM_VIDEO);
             if (key.equals("Search")) {
                 itemVideoS =
-                        (SearchItem) bundle.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                        (SearchItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
                 idVideo = itemVideoS.getIdVideo();
+                idVideo = itemVideoS.getIdVideo();
+                titleVideo = itemVideoS.getTvTitleVideo();
+                titleChannel = itemVideoS.getTitleChannel();
+                viewCount = itemVideoS.getViewCountVideo();
+                timePublic = itemVideoS.getPublishAt();
+                dateDayDiff = Util.getTime(timePublic);
+                likeCount = itemVideoS.getLikeCountVideo();
+                descVideo = itemVideoS.getDescVideo();
+                idChannel = itemVideoS.getIdChannel();
+                commentCount = itemVideoS.getCommentCount();
             } else {
                 itemVideo =
-                        (VideoItem) bundle.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
+                        (VideoItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
                 idVideo = itemVideo.getIdVideo();
+                idVideo = itemVideo.getIdVideo();
+                titleVideo = itemVideo.getTvTitleVideo();
+                titleChannel = itemVideo.getTvTitleChannel();
+                viewCount = itemVideo.getViewCountVideo();
+                timePublic = itemVideo.getPublishAt();
+                dateDayDiff = Util.getTime(timePublic);
+                likeCount = itemVideo.getLikeCountVideo();
+                descVideo = itemVideo.getDescVideo();
+                idChannel = itemVideo.getIdChannel();
+                commentCount = itemVideo.getCommentCount();
             }
-        }
-            itemVideo =
-                    (VideoItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
-            idVideo = itemVideo.getIdVideo();
-            titleVideo = itemVideo.getTvTitleVideo();
-            titleChannel = itemVideo.getTvTitleChannel();
-            viewCount = itemVideo.getViewCountVideo();
-            timePublic = itemVideo.getPublishAt();
-            dateDayDiff = Util.getTime(timePublic);
-            likeCount = itemVideo.getLikeCountVideo();
-            descVideo = itemVideo.getDescVideo();
-            idChannel = itemVideo.getIdChannel();
-            commentCount = itemVideo.getCommentCount();
+
         }
         // call api lấy logo channel
         callApiChannel(idChannel);
