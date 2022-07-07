@@ -22,16 +22,20 @@ import com.example.youtubeapp.my_interface.IItemOnClickCommentListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final static int VIEW_TYPE_ITEM = 0,
-            VIEW_TYPE_LOADING = 1;
+            VIEW_TYPE_LOADING = 1,
+            VIEW_TYPE_DESC = 2;
     private boolean isLoadingAdd;
 
-    private ArrayList<CommentItem> listItemCmt;
+    private ArrayList<CommentItem> listItemCmt ;
     private IItemOnClickCommentListener clickCommentListener;
+
 
     public CommentYoutubeAdapter(IItemOnClickCommentListener clickCommentListener) {
         this.clickCommentListener = clickCommentListener;
@@ -43,21 +47,33 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
+
     @Override
     public int getItemViewType(int position) {
         if (listItemCmt != null && position == listItemCmt.size() - 1 && isLoadingAdd) {
             return VIEW_TYPE_LOADING;
         }
-        return VIEW_TYPE_ITEM;
+        else if (position == 0) {
+            return VIEW_TYPE_DESC;
+        }
+        else {
+            return VIEW_TYPE_ITEM;
+        }
     }
+
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (VIEW_TYPE_ITEM == viewType) {
-            View view =  LayoutInflater.from(parent.getContext()).inflate(
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.item_comment_video, parent, false);
             return new CommentViewHolder(view);
+
+        } else if(viewType == VIEW_TYPE_DESC) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.item_in_bottom_sheet_comment, parent, false);
+            return new ItemInComment(view);
         } else {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_loading, parent, false);
@@ -71,9 +87,7 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == VIEW_TYPE_ITEM) {
             CommentItem item = listItemCmt.get(position);
-            if (item == null) {
-                return;
-            }
+
             CommentViewHolder viewHolder = (CommentViewHolder) holder;
             viewHolder.setData(item);
             viewHolder.rlOpenReplies.setOnClickListener(new View.OnClickListener() {
@@ -137,6 +151,8 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             tvRepliesCount.setText(String.valueOf(repliesCountCmt));
             if (!publishedAt.equals(updateAt)) {
                 tvEditor.setVisibility(View.VISIBLE);
+            } else {
+                tvEditor.setVisibility(View.GONE);
             }
             if (Integer.valueOf(repliesCountCmt) > 0) {
                 btListReplies.setVisibility(View.VISIBLE);
@@ -144,6 +160,13 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             } else {
                 btListReplies.setVisibility(View.GONE);
             }
+        }
+    }
+
+    class ItemInComment extends RecyclerView.ViewHolder {
+
+        public ItemInComment(@NonNull View itemView) {
+            super(itemView);
         }
     }
 
@@ -157,7 +180,7 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public void addFooterLoading() {
         isLoadingAdd = true;
-        listItemCmt.add(null);
+        listItemCmt.add(new CommentItem());
     }
 
     public void removeFooterLoading() {
@@ -169,7 +192,6 @@ public class CommentYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             listItemCmt.remove(pos);
             notifyItemRemoved(pos);
         }
-
     }
 
 

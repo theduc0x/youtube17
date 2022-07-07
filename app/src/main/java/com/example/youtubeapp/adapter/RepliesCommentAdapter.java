@@ -2,6 +2,7 @@ package com.example.youtubeapp.adapter;
 
 import android.app.Activity;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.model.itemrecycleview.CommentItem;
+import com.example.youtubeapp.model.itemrecycleview.VideoChannelItem;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.model.itemrecycleview.RepliesCommentItem;
 import com.example.youtubeapp.my_interface.ILoadMore;
@@ -27,12 +30,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 // View Holder khi loading
 class LoadingViewHolder extends RecyclerView.ViewHolder {
     ProgressBar progressBar;
-
     public LoadingViewHolder(@NonNull View itemView) {
         super(itemView);
         progressBar = itemView.findViewById(R.id.pb_loading);
     }
 }
+
 
 //View Holder khi loading xong
 class RepliesViewHolder extends RecyclerView.ViewHolder {
@@ -40,6 +43,7 @@ class RepliesViewHolder extends RecyclerView.ViewHolder {
     TextView tvAuthorName, tvDateDiff, tvCommentContent,
             tvLikeCountCmt, tvEditor;
     ImageView ivMoreSelect;
+
 
     public RepliesViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -64,134 +68,89 @@ class RepliesViewHolder extends RecyclerView.ViewHolder {
         String updateAt = replies.getUpdateAt();
         String dateDiff = Util.getTime(publishedAt);
         String commentContent = replies.getTextDisplay();
-        int likeCountCmt = replies.getLikeCount();
+        String likeCountCmt = replies.getLikeCount();
 
         // Đưa dữ đổ vào view
         Picasso.get().load(authorLogoUrl).into(civLogoAuthor);
         tvAuthorName.setText(authorName);
         tvCommentContent.setText(commentContent);
         tvDateDiff.setText(" • " + dateDiff);
-        tvLikeCountCmt.setText(Util.convertViewCount(likeCountCmt));
+        tvLikeCountCmt.setText(Util.convertViewCount(Double.parseDouble(likeCountCmt)));
         if (!publishedAt.equals(updateAt)) {
             tvEditor.setVisibility(View.VISIBLE);
+        } else {
+            tvEditor.setVisibility(View.GONE);
         }
-
     }
 }
 
 public class RepliesCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ArrayList<RepliesCommentItem> listReplies;
-    ILoadMore loadMore;
-    Activity activity;
-    boolean isLoading;
-    int visibleThreshold = 5;
-    int lastVisibleItem, totalItemCount;
+    private final static int VIEW_TYPE_ITEM = 0,
+            VIEW_TYPE_LOADING = 1,
+            VIEW_TYPE_DESC = 2;;
+    boolean isLoadingAdd;
 
-
-    public RepliesCommentAdapter(
-            RecyclerView recyclerView,
-            Activity activity,
-            ArrayList<RepliesCommentItem> listReplies) {
-        this.activity = activity;
+    public void setData(ArrayList<RepliesCommentItem> listReplies) {
         this.listReplies = listReplies;
-
-        final LinearLayoutManager linearLayoutManager =
-                (LinearLayoutManager) recyclerView.getLayoutManager();
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                totalItemCount = linearLayoutManager.getItemCount();
-                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-                if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
-                    if (loadMore != null) {
-                        loadMore.onLoadMore();
-                        isLoading = true;
-                    }
-                }
-            }
-        });
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == Util.VIEW_TYPE_ITEM) {
+        if (viewType == VIEW_TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.item_replies_comment_video, parent, false);
             return new RepliesViewHolder(view);
-        } else if (viewType == Util.VIEW_TYPE_LOADING) {
+        } else  {
             View view = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.item_loading, parent, false);
             return new LoadingViewHolder(view);
         }
-        return null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof RepliesViewHolder) {
+        if (holder.getItemViewType() == VIEW_TYPE_ITEM) {
             RepliesCommentItem item = listReplies.get(position);
-            if (item == null) {
-                return ;
-            }
+
             RepliesViewHolder viewHolder = (RepliesViewHolder) holder;
             viewHolder.setData(item);
-        } else if (holder instanceof LoadingViewHolder) {
-            LoadingViewHolder viewHolder = (LoadingViewHolder) holder;
-            viewHolder.progressBar.setIndeterminate(true);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return listReplies.get(position) == null ? Util.VIEW_TYPE_LOADING : Util.VIEW_TYPE_ITEM;
+        if (listReplies != null && position == listReplies.size() - 1 && isLoadingAdd) {
+            return VIEW_TYPE_LOADING;
+        }
+        return VIEW_TYPE_ITEM;
     }
 
     @Override
     public int getItemCount() {
-//        if (listReplies != null) {
+        if (listReplies != null) {
         return listReplies.size();
-//        }
-//        return 0;
+        }
+        return 0;
     }
 
-    public void setLoadMore(ILoadMore loadMore) {
-        this.loadMore = loadMore;
+    public void addFooterLoading() {
+        isLoadingAdd = true;
+        listReplies.add(new RepliesCommentItem(""));
     }
 
-    public void setLoaded() {
-        isLoading = false;
-    }
+    public void removeFooterLoading() {
+        isLoadingAdd = false;
 
-//    @NonNull
-//    @Override
-//    public RepliesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        if (viewType == Util.VIEW_TYPE_ITEM) {
-//            View view = LayoutInflater.from(parent.getContext()).inflate(
-//                    R.layout.item_replies_comment_video, parent, false);
-//            return new RepliesViewHolder(view);
-//        } else if (viewType == Util.VIEW_TYPE_LOADING){
-//            View view = LayoutInflater.from(parent.getContext()).inflate(
-//                    R.layout.item_loading, parent, false);
-//            return new LoadingViewHolder(view);
-//        }
-//        return null;
-//    }
-//
-//    @RequiresApi(api = Build.VERSION_CODES.O)
-//    @Override
-//    public void onBindViewHolder(@NonNull RepliesViewHolder holder, int position) {
-//        RepliesCommentItem replies = listReplies.get(position);
-//        holder.setData(replies);
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//            return listReplies.size();
-//
-//    }
+        int pos = listReplies.size() - 1;
+        RepliesCommentItem item = listReplies.get(pos);
+        if (item != null) {
+            listReplies.remove(pos);
+            notifyItemRemoved(pos);
+        }
+    }
 
 }

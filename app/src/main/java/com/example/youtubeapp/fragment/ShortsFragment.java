@@ -22,6 +22,7 @@ import com.example.youtubeapp.model.itemrecycleview.VideoItem;
 import com.example.youtubeapp.model.searchyoutube.ItemsSearch;
 import com.example.youtubeapp.model.searchyoutube.Search;
 import com.example.youtubeapp.utiliti.Util;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ShortsFragment extends Fragment {
+    YouTubePlayerView ypvVideo;
     ArrayList<VideoItem> listItems;
     ShortsVideoAdapter adapter;
     String pageToken = "";
@@ -41,12 +43,14 @@ public class ShortsFragment extends Fragment {
         final ViewPager2 vp2Video = view.findViewById(R.id.vp2_shorts_video);
         listItems = new ArrayList<>();
         adapter = new ShortsVideoAdapter();
+        ypvVideo = view.findViewById(R.id.ypv_shorts);
         calLApiVideoShortRandom(pageToken, "50", null);
         vp2Video.setAdapter(adapter);
         adapter.setData(listItems);
 
         return view;
     }
+
 
     private void calLApiVideoShortRandom(String nextPageToken,String maxResults, String order) {
         ApiServicePlayList.apiServicePlayList.videoUpdateNews(

@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/civ_logo_author_replies_item"
+            android:maxWidth="150dp"
             android:text="Liên Xô • " />
 
         <TextView
@@ -47,7 +48,7 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/tv_date_diff_replies_item"
             android:text="@string/tv_editor"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/iv_more_select_replies_item"
@@ -95,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_cmt_content_replies_item"
             android:layout_marginLeft="2dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
             android:layout_toRightOf="@id/ib_like_cmt_replies_item"
             android:text="4,6K"
             android:textSize="12dp" />

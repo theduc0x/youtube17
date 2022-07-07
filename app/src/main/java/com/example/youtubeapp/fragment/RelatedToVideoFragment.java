@@ -74,6 +74,7 @@ public class RelatedToVideoFragment extends Fragment {
                     Intent toPlayVideo = new Intent(getActivity(), VideoPlayActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO, item);
+                    bundle.putString(Util.EXTRA_KEY_ITEM_VIDEO, "Video");
                     toPlayVideo.putExtras(bundle);
                     startActivity(toPlayVideo);
                 }

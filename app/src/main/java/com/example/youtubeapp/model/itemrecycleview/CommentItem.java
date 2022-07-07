@@ -32,6 +32,12 @@ public class CommentItem implements Serializable {
         this.totalReplyCount = totalReplyCount;
         this.repliesComent = repliesComent;
     }
+    public CommentItem() {
+
+    }
+    public CommentItem(String textDisplay) {
+        this.textDisplay = textDisplay;
+    }
 
     public String getLikeCount() {
         return likeCount;

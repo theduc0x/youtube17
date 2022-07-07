@@ -12,12 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.fragment.ShortsFragment;
 import com.example.youtubeapp.model.itemrecycleview.VideoItem;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.example.youtubeapp.utiliti.Util;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerUtils;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiController;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -72,7 +75,6 @@ public class ShortsVideoAdapter extends RecyclerView.Adapter<ShortsVideoAdapter.
 //            pbLoading = itemView.findViewById(R.id.pb_loading_shorts);
         }
         public void setData(VideoItem item) {
-            View customPlayerUi = ypvShorts.inflateCustomPlayerUi(R.layout.custom_player_ui);
             String urlLogoChannel = item.getUrlLogoChannel();
             String titleChannel = item.getTvTitleChannel();
             String titleVideo = item.getTvTitleVideo();
@@ -80,22 +82,14 @@ public class ShortsVideoAdapter extends RecyclerView.Adapter<ShortsVideoAdapter.
 //            String cmtCount = Util.convertViewCount(Double.parseDouble(item.getCommentCount()));
             String idVideo = item.getIdVideo();
             String idChannel = item.getIdChannel();
-            String urlVideo = "https://www.youtube.com/shorts/" + idVideo;
 
-            YouTubePlayerListener listener = new AbstractYouTubePlayerListener() {
+            ypvShorts.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
                 @Override
-                public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                    CustomPlayerUiController customPlayerUiController = new CustomPlayerUiController( customPlayerUi, youTubePlayer, ypvShorts);
-                    youTubePlayer.addListener(customPlayerUiController);
-                    ypvShorts.addFullScreenListener(customPlayerUiController);
-
+                public void onReady(@NonNull com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer youTubePlayer) {
+                    super.onReady(youTubePlayer);
                     youTubePlayer.loadVideo(idVideo, 0);
                 }
-            };
-
-            IFramePlayerOptions options = new IFramePlayerOptions.Builder().controls(0).build();
-
-            ypvShorts.initialize(listener, options);
+            });
 
 //            vvShorts.setVideoPath(urlVideo);
 //            vvShorts.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

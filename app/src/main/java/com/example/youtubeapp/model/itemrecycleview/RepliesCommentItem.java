@@ -7,11 +7,11 @@ public class RepliesCommentItem {
     private String authorName;
     private String authorLogoUrl;
     private String authorChannelI;
-    private int likeCount;
+    private String likeCount;
     private String publishedAt;
     private String updateAt;
 
-    public RepliesCommentItem(String textDisplay, String authorName, String authorLogoUrl, String authorChannelI, int likeCount, String publishedAt, String updateAt) {
+    public RepliesCommentItem(String textDisplay, String authorName, String authorLogoUrl, String authorChannelI, String likeCount, String publishedAt, String updateAt) {
         this.textDisplay = textDisplay;
         this.authorName = authorName;
         this.authorLogoUrl = authorLogoUrl;
@@ -19,6 +19,10 @@ public class RepliesCommentItem {
         this.likeCount = likeCount;
         this.publishedAt = publishedAt;
         this.updateAt = updateAt;
+    }
+
+    public RepliesCommentItem(String authorName) {
+        this.authorName = authorName;
     }
 
     public String getTextDisplay() {
@@ -53,11 +57,11 @@ public class RepliesCommentItem {
         this.authorChannelI = authorChannelI;
     }
 
-    public int getLikeCount() {
+    public String getLikeCount() {
         return likeCount;
     }
 
-    public void setLikeCount(int likeCount) {
+    public void setLikeCount(String likeCount) {
         this.likeCount = likeCount;
     }
 

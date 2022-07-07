@@ -54,8 +54,10 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
     ProgressDialog progressDialog;
     VideoPlayActivity videoPlayActivity;
 
+
     ArrayList<CommentItem> listCmtItem;
     ArrayList<CommentItem> listAdd;
+    ArrayList<CommentItem> listAddS = new ArrayList<>();
     private int LoadPage = 1;
     private String pageToken = "";
     private boolean isLoading;
@@ -101,8 +103,8 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
         bottomSheetDialog.setContentView(viewDialog);
         bottomSheetDialog.setCanceledOnTouchOutside(false);
         // Xoay khi đang chờ load comment
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Loading...");
+//        progressDialog = new ProgressDialog(getContext());
+//        progressDialog.setMessage("Loading...");
 
         // chiều cao của màn hình activiy chứa fragment
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
@@ -145,6 +147,7 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
         listCmtItem = new ArrayList<>();
         tbCommentVideo = view.findViewById(R.id.tb_comment_video);
         videoPlayActivity = (VideoPlayActivity) getActivity();
+        listAddS.add(new CommentItem(""));
     }
 
     private void setDataComment() {
@@ -288,7 +291,6 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
                         repliesComment = listItem.get(i).getReplies();
 
 
-
                         // Thêm vào list
 
                         listAdd.add(new CommentItem(
@@ -297,15 +299,16 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
                                 updateAt, String.valueOf(totalRepliesCount), repliesComment));
                     }
                     if (listCmtItem == null) {
-                        listCmtItem = listAdd;
+                        listCmtItem = listAddS;
+//                        listCmtItem = listAdd;
+                        listCmtItem.addAll(listAdd);
                         adapter.setData(listCmtItem);
-                        setProgressBar();
                     } else {
                         adapter.removeFooterLoading();
                         listCmtItem.addAll(listAdd);
                         adapter.notifyDataSetChanged();
-                        setProgressBar();
                     }
+                    setProgressBar();
 
                 }
             }
@@ -331,17 +334,16 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch(item.getItemId()) {
+
                     case R.id.mn_top_cmt:
-                        currenPage = 1;
+                        resetData();
                         LoadPage = 1;
-                        listCmtItem = null;
                         callApiComment(idVideoM, "", "relevance", "10");
 //                        adapter.setData(listCmtItem);
                         break;
                     case R.id.mn_new_first:
-                        currenPage = 1;
+                        resetData();
                         LoadPage = 2;
-                        listCmtItem = null;
                         callApiComment(idVideoM, "", "time", "10");
 //                        adapter.setData(listCmtItem);
                         break;
@@ -350,6 +352,12 @@ public class BottomSheetDialogCommentFragment extends BottomSheetDialogFragment 
             }
         });
         popupMenu.show();
+    }
+    private void resetData() {
+        currenPage = 1;
+        listCmtItem = null;
+        listAddS = new ArrayList<>();
+        listAddS.add(new CommentItem(""));
     }
 
 }

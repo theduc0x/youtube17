@@ -3,6 +3,7 @@ package com.example.youtubeapp.fragment;
 import android.app.Dialog;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.my_interface.PaginationScrollListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.adapter.RepliesCommentAdapter;
 import com.example.youtubeapp.api.ApiServicePlayList;
@@ -41,6 +43,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment {
+    public static ArrayList<RepliesCommentItem> listReplies;
+    public static ArrayList<RepliesCommentItem> listAdd;
     CommentItem itemR;
     RelativeLayout rlOpenKeyboard;
     CircleImageView civReceive;
@@ -51,7 +55,13 @@ public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment 
     Toolbar tbReplies;
     String parentId;
     ImageButton ibBackCmt;
-//    String nextPageToken = "";
+
+
+    private String pageToken = "";
+    private boolean isLoading;
+    private boolean isLastPage;
+    private int totalPage = 5;
+    private int currenPage = 1;
 
 
     // Khởi tạo fragment dialog với dữ liệu truyền vào là 1 CommentItem
@@ -134,7 +144,7 @@ public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment 
     }
 
     private void intMain(View view) {
-        Util.listReplies = new ArrayList<>();
+        listReplies = new ArrayList<>();
         civReceive = view.findViewById(R.id.civ_logo_author_replies);
         tvNameReceive = view.findViewById(R.id.tv_author_name_replies);
         tvDateDiffReceive = view.findViewById(R.id.tv_date_diff_replies);
@@ -163,6 +173,14 @@ public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment 
         tvDateDiffReceive.setText(" • " + Util.getTime(itemR.getPublishedAt()));
         likeCountReceive.setText(Util.convertViewCount(Double.parseDouble(itemR.getLikeCount())));
         repliesCountReceive.setText(Util.convertViewCount(Double.parseDouble(itemR.getTotalReplyCount())));
+
+        int cmtCountD = Integer.valueOf(itemR.getTotalReplyCount());
+        if (cmtCountD % 10 != 0) {
+            totalPage = (cmtCountD / 10) + 1;
+        } else {
+            totalPage = (cmtCountD / 10);
+        }
+
         if (publishAt.equals(updateAt)) {
             tvEditor.setVisibility(View.VISIBLE);
         }
@@ -173,97 +191,59 @@ public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment 
 
         rvListReplies.setLayoutManager(linearLayoutManager);
 
-        adapter = new RepliesCommentAdapter(rvListReplies, getActivity(), Util.listReplies);
-        callApiReplies(Util.nextPageToken, parentId, "10");
+        adapter = new RepliesCommentAdapter();
         rvListReplies.addItemDecoration(decoration);
         rvListReplies.setAdapter(adapter);
 
-//        adapter.setLoadMore(new ILoadMore() {
-//            @Override
-//            public void onLoadMore() {
-//                String s = Util.nextPageToken;
-//                int totalR = itemR.getTotalReplyCount();
-//                Log.d("abccc", itemR.getTotalReplyCount() + "");
-//                if (Util.listReplies.size() <= totalR) {
-//                    Util.listReplies.add(null);
-//                    adapter.notifyItemInserted(Util.listReplies.size() - 1);
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Util.listReplies.remove(Util.listReplies.size() - 1);
-//                            adapter.notifyItemRemoved(Util.listReplies.size());
-//                            callApiRepliess(Util.nextPageToken, parentId, "5");
-//                            int index = Util.listReplies.size();
-//                            int end = index + 5;
-//                            for (int i = index ; i < end; i++) {
-//                                adapter.notifyItemInserted(i);
-//                            }
-//                            Log.d("abcccc", s + "");
-//                            adapter.setLoaded();
-//                        }
-//                    }, 1000);
-//                } else {
-//                    Log.d("abccc", "Success");
-//                }
-//            }
-//        });
-    }
+        setFirstDataPo();
 
-    public void callApiReplies(String nextPageToken, String parentId, String maxResults) {
-        ApiServicePlayList.apiServicePlayList.replies(
-                nextPageToken,
-                "snippet",
-                maxResults,
-                parentId,
-                "plainText",
-                Util.API_KEY
-        ).enqueue(new Callback<Replies>() {
-
+        rvListReplies.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
-            public void onResponse(Call<Replies> call, Response<Replies> response) {
-                Replies replies = null;
-                String authorLogoUrl = "", authorName = "", publishAt = "", updateAt = "",
-                        displayContentCmt = "", authorIdChannel = "";
-                int likeCount = 0;
-//                Util.listCmtItem.clear();
-                replies = response.body();
-                Util.nextPageToken = replies.getNextPageToken();
-                if (replies != null) {
-                    ArrayList<ItemsR> listItem = replies.getItems();
-                    for (int i = 0; i < listItem.size(); i++) {
-                        authorLogoUrl = listItem.get(i).getSnippet().getAuthorProfileImageUrl();
-                        authorName = listItem.get(i).getSnippet()
-                                .getAuthorDisplayName();
-                        publishAt = listItem.get(i).getSnippet()
-                                .getPublishedAt();
-                        updateAt = listItem.get(i).getSnippet()
-                                .getUpdatedAt();
-                        authorIdChannel = listItem.get(i).getSnippet()
-                                .getAuthorChannelId().getValue();
-                        displayContentCmt = listItem.get(i).getSnippet()
-                                .getTextDisplay();
-                        likeCount = listItem.get(i).getSnippet()
-                                .getLikeCount();
-                        Util.listReplies.add(new RepliesCommentItem(
-                                displayContentCmt, authorName, authorLogoUrl,
-                                authorIdChannel, likeCount, publishAt, updateAt
-                        ));
-                        adapter.notifyItemInserted(i);
-                    }
-//                    adapter.notifyDataSetChanged();
-                }
-
+            public void loadMoreItem() {
+                isLoading = true;
+                currenPage += 1;
+                loadNextPage();
             }
-
             @Override
-            public void onFailure(Call<Replies> call, Throwable t) {
-
+            public boolean isLoading() {
+                return isLoading;
+            }
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
             }
         });
+
+    }
+
+    private void setFirstDataPo() {
+        listReplies = null;
+        callApiReplies( pageToken, parentId, "10");
     }
 
 
-    public void callApiRepliess(String nextPageToken, String parentId, String maxResults) {
+    // Set propress bar load data
+    private void setProgressBar() {
+        if (currenPage < totalPage) {
+            adapter.addFooterLoading();
+        } else {
+            isLastPage = true;
+        }
+    }
+    // Load dữ liệu của page tiếp theo
+    private void loadNextPage() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                    callApiReplies( pageToken, parentId, "10");
+                    isLoading = false;
+            }
+        },1000);
+    }
+
+
+    public void callApiReplies(String nextPageToken, String parentId, String maxResults) {
+        listAdd = new ArrayList<>();
         ApiServicePlayList.apiServicePlayList.replies(
                 nextPageToken,
                 "snippet",
@@ -278,10 +258,10 @@ public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment 
                 Replies replies = null;
                 String authorLogoUrl = "", authorName = "", publishAt = "", updateAt = "",
                         displayContentCmt = "", authorIdChannel = "";
-                int likeCount = 0;
+                String likeCount = "";
                 replies = response.body();
-                Util.nextPageToken = replies.getNextPageToken();
                 if (replies != null) {
+                    pageToken = replies.getNextPageToken();
                     ArrayList<ItemsR> listItem = replies.getItems();
                     for (int i = 0; i < listItem.size(); i++) {
                         authorLogoUrl = listItem.get(i).getSnippet().getAuthorProfileImageUrl();
@@ -295,15 +275,24 @@ public class BottomSheetDialogRepliesFragment extends BottomSheetDialogFragment 
                                 .getAuthorChannelId().getValue();
                         displayContentCmt = listItem.get(i).getSnippet()
                                 .getTextDisplay();
-                        likeCount = listItem.get(i).getSnippet()
-                                .getLikeCount();
-                        Util.listReplies.add(new RepliesCommentItem(
+                        likeCount = String.valueOf(listItem.get(i).getSnippet()
+                                .getLikeCount());
+
+                        listAdd.add(new RepliesCommentItem(
                                 displayContentCmt, authorName, authorLogoUrl,
                                 authorIdChannel, likeCount, publishAt, updateAt
                         ));
 
+                        }
+                    if (listReplies == null) {
+                        listReplies = listAdd;
+                        adapter.setData(listReplies);
+                    } else {
+                        adapter.removeFooterLoading();
+                        listReplies.addAll(listAdd);
+                        adapter.notifyDataSetChanged();
                     }
-//                    adapter.notifyDataSetChanged();
+                    setProgressBar();
                 }
 
             }

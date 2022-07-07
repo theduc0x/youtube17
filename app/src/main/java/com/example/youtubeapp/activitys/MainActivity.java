@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.mn_home:
+                        srlReloadData.setEnabled(true);
+                        setToolBarMainVisible();
                         if (item.isChecked()) {
                             homeFragment = (HomeFragment) getSupportFragmentManager()
                                     .findFragmentByTag("fragHome");
@@ -78,6 +80,8 @@ public class MainActivity extends AppCompatActivity
                         }
                         break;
                     case R.id.mn_explore:
+                        tbNav.setVisibility(View.GONE);
+                        srlReloadData.setEnabled(false);
                         ShortsFragment exploreFragment = new ShortsFragment();
                         item.setChecked(true);
                         selectFragment(exploreFragment);
