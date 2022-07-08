@@ -35,4 +35,6 @@
     <dimen name="iv_width_40dp">40dp</dimen>
     <dimen name="iv_height_40dp">40dp</dimen>
     <dimen name="mb_short_item_50dp">25dp</dimen>
+    <dimen name="mg_20dp">20dp</dimen>
+    <dimen name="mb_5dp">5dp</dimen>
 </resources>

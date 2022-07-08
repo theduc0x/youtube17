@@ -2,6 +2,7 @@ package com.example.youtubeapp.api;
 
 import com.example.youtubeapp.model.detailvideo.DetailVideo;
 import com.example.youtubeapp.model.infochannel.Channel;
+import com.example.youtubeapp.model.listcategory.Category;
 import com.example.youtubeapp.model.listchannelsfromchannel.ChannelsList;
 import com.example.youtubeapp.model.listcomment.Comment;
 import com.example.youtubeapp.model.listplaylistvideochannel.PlayList;
@@ -159,6 +160,7 @@ public interface ApiServicePlayList {
             @Query("key") String key,
             @Query("maxResults") String maxResults);
 
+    // Search list shorts video
     @GET("youtube/v3/search")
     Call<Search> searchListShorts(
             @Query("pageToken") String pageToken,
@@ -166,4 +168,11 @@ public interface ApiServicePlayList {
             @Query("q") String q,
             @Query("key") String key,
             @Query("maxResults") String maxResults);
+
+    // Nhóm category
+    @GET("youtube/v3/videoCategories")
+    Call<Category> listCategory(
+            @Query("part") String part,
+            @Query("regionCode") String regionCode,
+            @Query("key") String key);
 }

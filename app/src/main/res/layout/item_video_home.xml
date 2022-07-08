@@ -25,7 +25,10 @@
         app:layout_constraintWidth_percent="0.15"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_item_video"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground" />
 
     <TextView
         android:id="@+id/tv_title_video"
@@ -54,24 +57,27 @@
             android:id="@+id/tv_title_channel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="3dp"
-            android:textSize="12dp"
+            android:maxWidth="120dp"
+            android:layout_marginEnd="@dimen/ms_5dp"
+            android:layout_marginStart="@dimen/ms_3dp"
+            android:textSize="@dimen/textSize_12dp"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="Dân ca miền tây"/>
 
         <TextView
             android:id="@+id/tv_view_video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:textSize="12dp"
+            android:layout_marginStart="@dimen/ms_5dp"
+            android:textSize="@dimen/textSize_12dp"
             android:text=". 4.6M views"/>
 
         <TextView
             android:id="@+id/tv_time_video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12dp"
+            android:textSize="@dimen/textSize_12dp"
             android:text=". 9 months ago"/>
 
     </LinearLayout>

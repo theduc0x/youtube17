@@ -48,7 +48,7 @@ public class ChannelChannelsFragment extends Fragment implements SwipeRefreshLay
         View view = inflater.inflate(R.layout.fragment_channel_channels, container, false);
         getBundle();
         tvNotFeature = view.findViewById(R.id.tv_not_channels);
-        srlLoad = view.findViewById(R.id.srl_reload_data);
+        srlLoad = view.findViewById(R.id.srl_reload_data_channel);
         srlLoad.setOnRefreshListener(this);
         rvChannelList = view.findViewById(R.id.rv_item_channel_list);
         listItems = new ArrayList<>();
@@ -171,6 +171,9 @@ public class ChannelChannelsFragment extends Fragment implements SwipeRefreshLay
             @Override
             public void run() {
                 srlLoad.setRefreshing(false);
+                listItems = new ArrayList<>();
+                callApiGetListChannel(idChannel);
+                adapter.setData(listItems);
             }
         }, 1000);
     }

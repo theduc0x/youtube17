@@ -15,6 +15,7 @@
     <color name="button">#EBECED</color>
     <color name="black_opacity">#D0121111</color>
     <color name="clickable_press">#D8EBE6E6</color>
-    <color name="line_horizontal">#7EEFE9E9</color>
+    <color name="line_horizontal">#7EE0D6D6</color>
     <color name="bg_edittext">#B2E1DEDE</color>
+    <color name="text_cate">#94F4EFEF</color>
 </resources>

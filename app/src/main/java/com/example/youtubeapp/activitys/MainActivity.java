@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.adapter.CategoryAdapter;
+import com.example.youtubeapp.api.ApiServicePlayList;
 import com.example.youtubeapp.fragment.ShortsFragment;
 import com.example.youtubeapp.fragment.HomeFragment;
 import com.example.youtubeapp.fragment.LibraryFragment;
@@ -23,12 +27,21 @@ import com.example.youtubeapp.fragment.NotificationFragment;
 import com.example.youtubeapp.fragment.SearchFragment;
 import com.example.youtubeapp.fragment.SearchResultsFragment;
 import com.example.youtubeapp.fragment.SubcriptionFragment;
+import com.example.youtubeapp.model.itemrecycleview.CategoryItem;
+import com.example.youtubeapp.model.listcategory.Category;
+import com.example.youtubeapp.model.listcategory.Items;
+import com.example.youtubeapp.my_interface.IItemOnClickCategoryListener;
 import com.example.youtubeapp.utiliti.Util;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.util.ArrayList;
 import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements SwipeRefreshLayout.OnRefreshListener {
@@ -38,14 +51,15 @@ public class MainActivity extends AppCompatActivity
     SwipeRefreshLayout srlReloadData;
     HomeFragment homeFragment;
     AppBarLayout ablHome;
+    ArrayList<CategoryItem> listCategory;
+    RecyclerView rvListCate;
+    CategoryAdapter adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         tbNav = findViewById(R.id.tb_nav);
         tbNav.setVisibility(View.VISIBLE);
         bnvFragment = findViewById(R.id.bnv_fragment);
@@ -54,6 +68,21 @@ public class MainActivity extends AppCompatActivity
         srlReloadData = findViewById(R.id.srl_reload);
         ablHome = findViewById(R.id.abl_nav);
         srlReloadData.setOnRefreshListener(this);
+        callCategory("vn");
+        listCategory = new ArrayList<>();
+        rvListCate = findViewById(R.id.rv_list_category);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false);
+        adapter = new CategoryAdapter(new IItemOnClickCategoryListener() {
+            @Override
+            public void onClickCategory(String idCategory) {
+
+            }
+        });
+        rvListCate.setLayoutManager(linearLayoutManager);
+        rvListCate.setAdapter(adapter);
+        adapter.setData(listCategory);
+
         homeFragment = new HomeFragment();
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -151,8 +180,9 @@ public class MainActivity extends AppCompatActivity
             }
         }, 1000);
     }
-
+    // add phần tìm kiếm
     public void addFragmentSearch(String s) {
+        srlReloadData.setEnabled(false);
         bnvFragment.setVisibility(View.GONE);
         tbNav.setVisibility(View.GONE);
         SearchFragment searchFragment = new SearchFragment();
@@ -175,8 +205,9 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
-
+    // Add thêm kết quả của việc search vào main
     public void addFragmentSearchResults(String q) {
+        srlReloadData.setEnabled(false);
         tbNav.setVisibility(View.GONE);
         bnvFragment.setVisibility(View.VISIBLE);
 //        removeFragmentSearch();
@@ -190,42 +221,43 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.addToBackStack("SearchFragmentRe");
         fragmentTransaction.commit();
     }
-
-//    public void addFragmentChannel(String idChannel, String titleChannel) {
-//        tbNav.setVisibility(View.GONE);
-//        bnvFragment.setVisibility(View.VISIBLE);
-////        removeFragmentSearch();
-//        ChannelDetailFragment channelDetailFragment = new ChannelDetailFragment();
-////        getSupportFragmentManager().popBackStack();
-//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        Bundle bundle = new Bundle();
-//        bundle.putString("ID_CHANNEL", idChannel);
-//        bundle.putString("TITLE_CHANNEL", titleChannel);
-//        channelDetailFragment.setArguments(bundle);
-//        fragmentTransaction.replace(R.id.fl_content, channelDetailFragment, "fragChannelDetail");
-//        fragmentTransaction.addToBackStack("Channel");
-//        fragmentTransaction.commit();
-//    }
-
-
-//    private void removeFragmentSearch() {
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        SearchFragment searchFragment
-//                = (SearchFragment) getSupportFragmentManager().findFragmentByTag("fragSearch");
-//        if (searchFragment != null) {
-//            transaction.remove(searchFragment);
-//            transaction.commit();
-//        } else {
-//            Toast.makeText(this,
-//                    "Không có fragment để xóa",
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
-
+    // hiển thị toolbar và bnvbar
     public void setToolBarMainVisible() {
         bnvFragment.setVisibility(View.VISIBLE);
         tbNav.setVisibility(View.VISIBLE);
+        srlReloadData.setEnabled(true);
         Log.d("fjdsal","success");
+    }
+
+    private void callCategory(String regionCode) {
+        ApiServicePlayList.apiServicePlayList.listCategory(
+                "snippet",
+                regionCode,
+                Util.API_KEY
+        ).enqueue(new Callback<Category>() {
+            @Override
+            public void onResponse(Call<Category> call, Response<Category> response) {
+                boolean check = false;
+                String titleCate = "", idCate = "";
+                Category category = response.body();
+                if (category != null) {
+                    ArrayList<Items> listItem = category.getItems();
+                    for (int i = 0; i < listItem.size(); i++) {
+                        check = listItem.get(i).getSnippet().isAssignable();
+                        if (check) {
+                            titleCate  = listItem.get(i).getSnippet().getTitle();
+                            idCate = listItem.get(i).getId();
+                            listCategory.add(new CategoryItem(idCate, titleCate, check));
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Category> call, Throwable t) {
+
+            }
+        });
     }
 }

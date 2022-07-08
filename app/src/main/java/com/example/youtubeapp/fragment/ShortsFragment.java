@@ -3,6 +3,7 @@ package com.example.youtubeapp.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -41,9 +42,10 @@ public class ShortsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_shorts, container, false);
         final ViewPager2 vp2Video = view.findViewById(R.id.vp2_shorts_video);
-        listItems = new ArrayList<>();
-        adapter = new ShortsVideoAdapter();
         ypvVideo = view.findViewById(R.id.ypv_shorts);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        listItems = new ArrayList<>();
+        adapter = new ShortsVideoAdapter(getContext());
         calLApiVideoShortRandom(pageToken, "50", null);
         vp2Video.setAdapter(adapter);
         adapter.setData(listItems);
@@ -51,8 +53,12 @@ public class ShortsFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
-    private void calLApiVideoShortRandom(String nextPageToken,String maxResults, String order) {
+    private void calLApiVideoShortRandom(String nextPageToken, String maxResults, String order) {
         ApiServicePlayList.apiServicePlayList.videoUpdateNews(
                 nextPageToken,
                 "snippet",

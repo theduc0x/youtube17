@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.model.itemrecycleview.SearchItem;
@@ -15,10 +16,13 @@ import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.fragment.VideoContainDataFragment;
 import com.example.youtubeapp.fragment.VideoContainYoutubePlayFragment;
 import com.example.youtubeapp.model.itemrecycleview.VideoItem;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 
-public class VideoPlayActivity extends AppCompatActivity {
+public class VideoPlayActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
     YouTubePlayerView ypvVideo;
     String idVideo;
     VideoItem itemVideo;
@@ -31,11 +35,10 @@ public class VideoPlayActivity extends AppCompatActivity {
         addFragmentMain();
 //        addFragmentRelated();
 
-        VideoContainYoutubePlayFragment youtubePlayFragment =
-                (VideoContainYoutubePlayFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.fm_youtube_play_view);
+        YouTubePlayerFragment youTubePlayerFragment = (YouTubePlayerFragment) getFragmentManager()
+                .findFragmentById(R.id.fm_youtube_play_view);
+        youTubePlayerFragment.initialize(Util.API_KEY, this);
 
-        youtubePlayFragment.playVideo(idVideo);
     }
 //    public void goToDetailRepliesFragment(CommentItem item) {
 //        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -92,4 +95,28 @@ public class VideoPlayActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider,
+                                        YouTubePlayer youTubePlayer, boolean b) {
+        YouTubePlayer.PlayerStyle playerStyle = YouTubePlayer.PlayerStyle.DEFAULT;
+        if(!b) {
+            youTubePlayer.setPlayerStyle(playerStyle);
+            youTubePlayer.loadVideo(idVideo);
+        }
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider,
+                                        YouTubeInitializationResult youTubeInitializationResult) {
+        final int REQUEST_CODE = 1;
+
+        if(youTubeInitializationResult.isUserRecoverableError()) {
+            youTubeInitializationResult.getErrorDialog(this,REQUEST_CODE).show();
+        } else {
+            String errorMessage =
+                    String.format("There was an error initializing the YoutubePlayer (%1$s)",
+                            youTubeInitializationResult.toString());
+            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+        }
+    }
 }

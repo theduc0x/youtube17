@@ -19,6 +19,9 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground">
         android:weightSum="10"
         android:orientation="horizontal">
 
@@ -98,6 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="15.1dp"
         app:layout_constraintTop_toBottomOf="@id/bnv_play_video_select"
+
         android:background="@color/grey"/>
 
     <RelativeLayout
@@ -105,7 +109,9 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center_vertical"
-        android:background="@drawable/custom_button_transparent">
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/civ_image_logo_channel"
@@ -121,8 +127,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/civ_image_logo_channel"
-            android:layout_toLeftOf="@+id/bt_subscribe">
+            android:layout_toLeftOf="@+id/bt_subscribe"
+            android:layout_toRightOf="@id/civ_image_logo_channel">
 
             <TextView
                 android:id="@+id/tv_title_channel_video"
@@ -131,8 +137,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
-                android:maxLines="1"
                 android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/grey"
                 android:textSize="15dp"
                 android:textStyle="bold" />
@@ -183,6 +189,9 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
         android:orientation="vertical">
 
         <RelativeLayout

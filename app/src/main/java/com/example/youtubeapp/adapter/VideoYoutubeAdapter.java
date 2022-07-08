@@ -101,7 +101,7 @@ public class VideoYoutubeAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Picasso.get().load(urlLogoChannel).into(viewHolder.civLogoChannel);
 
             viewHolder.tvTimeVideo.setText(dateDayDiff);
-            viewHolder.tvViewCountVideo.setText( "• "+ viewCountVideo + " views •");
+            viewHolder.tvViewCountVideo.setText( "• "+ viewCountVideo + " views • ");
             String idVideo = video.getIdVideo();
             viewHolder.clItemClick.setOnClickListener(new View.OnClickListener() {
                 @Override
