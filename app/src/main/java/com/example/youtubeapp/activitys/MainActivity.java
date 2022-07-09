@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.example.youtubeapp.R;
 import com.example.youtubeapp.adapter.CategoryAdapter;
@@ -45,6 +46,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements SwipeRefreshLayout.OnRefreshListener {
+    LinearLayout llCategory;
     Toolbar tbNav;
     BottomNavigationView bnvFragment;
     FrameLayout flContent;
@@ -68,15 +70,24 @@ public class MainActivity extends AppCompatActivity
         srlReloadData = findViewById(R.id.srl_reload);
         ablHome = findViewById(R.id.abl_nav);
         srlReloadData.setOnRefreshListener(this);
+        llCategory = findViewById(R.id.ll_category);
         callCategory("vn");
         listCategory = new ArrayList<>();
+        listCategory.add(new CategoryItem("0", "Most Popular", true));
         rvListCate = findViewById(R.id.rv_list_category);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 this, LinearLayoutManager.HORIZONTAL, false);
-        adapter = new CategoryAdapter(new IItemOnClickCategoryListener() {
+        adapter = new CategoryAdapter(this, new IItemOnClickCategoryListener() {
             @Override
             public void onClickCategory(String idCategory) {
-
+                homeFragment = new HomeFragment();
+                Bundle bundle = new Bundle();
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                bundle.putString("idCate", idCategory);
+                homeFragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.fl_content, homeFragment, "fragHome");
+                fragmentTransaction.addToBackStack(HomeFragment.TAG);
+                fragmentTransaction.commit();
             }
         });
         rvListCate.setLayoutManager(linearLayoutManager);
@@ -165,13 +176,13 @@ public class MainActivity extends AppCompatActivity
     // KHi load lại trang home
     @Override
     public void onRefresh() {
-        tbNav.setVisibility(View.VISIBLE);
+        setToolBarMainVisible();
+        reloadCategory();
         HomeFragment homeFragment1 = new HomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_content, homeFragment1, "fragHome");
         fragmentTransaction.addToBackStack(HomeFragment.TAG);
         fragmentTransaction.commit();
-
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -182,9 +193,8 @@ public class MainActivity extends AppCompatActivity
     }
     // add phần tìm kiếm
     public void addFragmentSearch(String s) {
-        srlReloadData.setEnabled(false);
+        setToolBarMainInvisible();
         bnvFragment.setVisibility(View.GONE);
-        tbNav.setVisibility(View.GONE);
         SearchFragment searchFragment = new SearchFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Util.BUNDLE_EXTRA_TEXT_EDITTEXT, s);
@@ -207,9 +217,9 @@ public class MainActivity extends AppCompatActivity
     }
     // Add thêm kết quả của việc search vào main
     public void addFragmentSearchResults(String q) {
-        srlReloadData.setEnabled(false);
-        tbNav.setVisibility(View.GONE);
+        setToolBarMainInvisible();
         bnvFragment.setVisibility(View.VISIBLE);
+
 //        removeFragmentSearch();
         SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
         getSupportFragmentManager().popBackStack();
@@ -226,7 +236,13 @@ public class MainActivity extends AppCompatActivity
         bnvFragment.setVisibility(View.VISIBLE);
         tbNav.setVisibility(View.VISIBLE);
         srlReloadData.setEnabled(true);
+        llCategory.setVisibility(View.VISIBLE);
         Log.d("fjdsal","success");
+    }
+    public void setToolBarMainInvisible() {
+        srlReloadData.setEnabled(false);
+        tbNav.setVisibility(View.GONE);
+        llCategory.setVisibility(View.GONE);
     }
 
     private void callCategory(String regionCode) {
@@ -248,8 +264,9 @@ public class MainActivity extends AppCompatActivity
                             titleCate  = listItem.get(i).getSnippet().getTitle();
                             idCate = listItem.get(i).getId();
                             listCategory.add(new CategoryItem(idCate, titleCate, check));
+                            adapter.notifyItemChanged(i);
                         }
-                        adapter.notifyDataSetChanged();
+
                     }
                 }
             }
@@ -260,4 +277,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+    private void reloadCategory() {
+        listCategory.clear();
+        listCategory.add(new CategoryItem("0", "Most Popular", true));
+        adapter.setPosition(0);
+        callCategory("vn");
+        adapter.notifyDataSetChanged();
+    }
+
 }

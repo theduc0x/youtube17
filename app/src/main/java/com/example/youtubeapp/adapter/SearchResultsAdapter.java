@@ -224,7 +224,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
             tvTimeVideo.setText(dateDayDiff);
             if (!viewCountVideo.equals("")) {
                 viewCountVideo = Util.convertViewCount(Double.parseDouble(viewCountVideo));
-                tvViewCountVideo.setText("• " + viewCountVideo + " views •");
+                tvViewCountVideo.setText("• " + viewCountVideo + " views • ");
             }
 
 

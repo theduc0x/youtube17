@@ -42,7 +42,7 @@ import retrofit2.Response;
 public class VideoContainDataFragment extends Fragment {
     RelativeLayout rlGroup, rlOpenChannel;
     LinearLayout llDisplayDesc, llCommentGroup;
-    TextView tvTitleVideoPlay, tvViewVideoPlay, tvTimeVideoPlay;
+    TextView tvTitleVideoPlay, tvViewVideoPlay, tvTimeVideoPlay, tvTurnOffComment;
     BottomNavigationView bnvOption;
     CircleImageView civLogoChannel, civLogoUser;
     TextView tvTitleChannelVideo, tvSubscription, tvCommentCount, tvCmtContent;
@@ -169,6 +169,7 @@ public class VideoContainDataFragment extends Fragment {
         civLogoUser = view.findViewById(R.id.civ_logo_channel_user);
         tvCmtContent = view.findViewById(R.id.tv_comment_video);
         rlOpenChannel = view.findViewById(R.id.rl_channel_click);
+        tvTurnOffComment = view.findViewById(R.id.tv_comment_off);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -180,7 +181,6 @@ public class VideoContainDataFragment extends Fragment {
             if (key.equals("Search")) {
                 itemVideoS =
                         (SearchItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
-                idVideo = itemVideoS.getIdVideo();
                 idVideo = itemVideoS.getIdVideo();
                 titleVideo = itemVideoS.getTvTitleVideo();
                 titleChannel = itemVideoS.getTitleChannel();
@@ -194,7 +194,6 @@ public class VideoContainDataFragment extends Fragment {
             } else {
                 itemVideo =
                         (VideoItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_OBJECT_ITEM_VIDEO);
-                idVideo = itemVideo.getIdVideo();
                 idVideo = itemVideo.getIdVideo();
                 titleVideo = itemVideo.getTvTitleVideo();
                 titleChannel = itemVideo.getTvTitleChannel();
@@ -234,14 +233,21 @@ public class VideoContainDataFragment extends Fragment {
             }
 
         });
+        if (commentCount.equals("0")) {
+            llCommentGroup.setVisibility(View.GONE);
+            tvTurnOffComment.setVisibility(View.VISIBLE);
+        } else {
+            llCommentGroup.setVisibility(View.VISIBLE);
+            tvTurnOffComment.setVisibility(View.GONE);
+            llCommentGroup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickOpenCommentDialogFragment();
+                }
 
-        llCommentGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickOpenCommentDialogFragment();
-            }
+            });
+        }
 
-        });
     }
     // Mở số comment
     private void clickOpenCommentDialogFragment() {
@@ -254,7 +260,7 @@ public class VideoContainDataFragment extends Fragment {
     // Click open desc
     private void clickOpenBottomSheetDialogFragment() {
         BottomSheetDialogDescFragment bottomSheetDialogDescFragment =
-                BottomSheetDialogDescFragment.newInstance(itemVideo);
+                BottomSheetDialogDescFragment.newInstance(itemVideo, itemVideoS);
         bottomSheetDialogDescFragment.show(getChildFragmentManager(),
                 bottomSheetDialogDescFragment.getTag());
 

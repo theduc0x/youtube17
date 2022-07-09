@@ -10,6 +10,9 @@
         android:layout_height="29dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+
         android:background="@drawable/custom_category"
         android:layout_marginStart="@dimen/mg_20dp"
         android:text="Gaming"

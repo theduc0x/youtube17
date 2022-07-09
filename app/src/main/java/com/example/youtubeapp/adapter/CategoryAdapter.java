@@ -1,5 +1,7 @@
 package com.example.youtubeapp.adapter;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +20,21 @@ import java.util.ArrayList;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CateViewHolder> {
     IItemOnClickCategoryListener onClickCategoryListener;
     ArrayList<CategoryItem> listCate;
+    Context context;
+    private int previousPosition = 0;
 
-    public CategoryAdapter(IItemOnClickCategoryListener onClickCategoryListener) {
+    public CategoryAdapter(Context context, IItemOnClickCategoryListener onClickCategoryListener) {
+        this.context = context;
         this.onClickCategoryListener = onClickCategoryListener;
     }
 
     public void setData(ArrayList<CategoryItem> listCate) {
         this.listCate = listCate;
+    }
+
+
+    public void setPosition(int pos) {
+        this.previousPosition = pos;
     }
     @NonNull
     @Override
@@ -34,6 +44,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CateVi
         return new CateViewHolder(view);
     }
 
+    @SuppressLint({"UseCompatLoadingForDrawables", "ResourceType"})
     @Override
     public void onBindViewHolder(@NonNull CateViewHolder holder, int position) {
         CategoryItem cate = listCate.get(position);
@@ -41,13 +52,27 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CateVi
             return;
         }
         holder.setData(cate);
+
         String idCate = cate.getIdCategory();
         holder.btCate.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
+                previousPosition = holder.getAdapterPosition() ;
+                notifyDataSetChanged();
                 onClickCategoryListener.onClickCategory(idCate);
             }
         });
+        if (previousPosition == position) {
+//            holder.btCate.setText(R.color.white);
+            holder.btCate.setBackground(context.getResources().getDrawable(
+                    R.drawable.custom_click_category
+            ));
+        } else {
+            holder.btCate.setBackground(context.getResources().getDrawable(
+                    R.drawable.custom_not_click_category));
+        }
+
     }
 
     @Override
@@ -64,8 +89,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CateVi
             super(itemView);
             btCate = itemView.findViewById(R.id.bt_category);
         }
+        @SuppressLint("ResourceAsColor")
         public void setData(CategoryItem cate) {
             btCate.setText(cate.getTitleCate());
         }
     }
+
 }

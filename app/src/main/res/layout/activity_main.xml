@@ -31,24 +31,32 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_horizontal" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_list_category"
+        <LinearLayout
+            android:id="@+id/ll_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/mt_5dp"
-            android:layout_marginBottom="@dimen/mb_5dp"
-            android:background="@color/white"/>
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/line_horizontal" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="@dimen/mb_5dp"
-            android:background="@color/line_horizontal" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_list_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/mt_5dp"
+                android:layout_marginBottom="@dimen/mb_5dp"
+                android:background="@color/white"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="@dimen/mb_5dp"
+                android:background="@color/line_horizontal" />
+        </LinearLayout>
+
+
 
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -63,12 +71,14 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/srl_reload"
             android:layout_width="match_parent"
-            android:layout_height="670dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/mb_50dp"
             >
             <FrameLayout
                 android:id="@+id/fl_content"
                 android:layout_width="match_parent"
-                android:layout_height="670dp">
+                android:layout_height="wrap_content"
+                >
             </FrameLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

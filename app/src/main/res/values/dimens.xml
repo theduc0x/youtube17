@@ -37,4 +37,5 @@
     <dimen name="mb_short_item_50dp">25dp</dimen>
     <dimen name="mg_20dp">20dp</dimen>
     <dimen name="mb_5dp">5dp</dimen>
+    <dimen name="ms_20dp">20dp</dimen>
 </resources>

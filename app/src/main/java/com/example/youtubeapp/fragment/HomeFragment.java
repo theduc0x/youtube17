@@ -51,12 +51,14 @@ public class HomeFragment extends Fragment {
     private boolean isLastPage;
     private int totalPage = 5;
     private int currenPage = 1;
+    private String categoryId = "0";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         listVideoItem = new ArrayList<>();
+        getBundleIdCategory();
         rvItemVideo = view.findViewById(R.id.rv_item_video);
         mainActivity = (MainActivity) getActivity();
 
@@ -114,7 +116,7 @@ public class HomeFragment extends Fragment {
 
     private void setFirstData() {
         listVideoItem = null;
-        callApiPlaylist(pageToken, "10");
+        callApiPlaylist(pageToken, "10", categoryId);
     }
 
     // Set propress bar load data
@@ -127,18 +129,18 @@ public class HomeFragment extends Fragment {
     }
     // Load dữ liệu của page tiếp theo
     private void loadNextPage() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
                 Toast.makeText(getContext(), "Load Page" + currenPage, Toast.LENGTH_SHORT).show();
-                callApiPlaylist(pageToken, "10");
+                callApiPlaylist(pageToken, "10", categoryId);
                 isLoading = false;
-            }
-        },1000);
+//            }
+//        },1000);
     }
 
     // Get dữ liệu về
-    private void callApiPlaylist(String nextPageToken, String maxResults) {
+    private void callApiPlaylist(String nextPageToken, String maxResults, String idCategory) {
         ApiServicePlayList.apiServicePlayList.listVideoNext(
                 nextPageToken,
                 "snippet",
@@ -146,6 +148,7 @@ public class HomeFragment extends Fragment {
                 "mostPopular",
                 "vn",
                 "vn",
+                idCategory,
                 Util.API_KEY,
                 maxResults
         ).enqueue(new Callback<ListVideo>() {
@@ -225,12 +228,6 @@ public class HomeFragment extends Fragment {
                     }
 
                 }
-                // Gọi lại 4 lần cho đủ 200 video
-//                a++;
-//                if (a > 4) {
-//                    return;
-//                }
-//                callApiPlaylist(pageToken);
             }
 
             // Nếu lỗi sẽ thông báo lỗi
@@ -273,5 +270,13 @@ private void callApiChannel(String id, ArrayList<VideoItem> video, int pos) {
             Log.d("ab", t.toString());
         }
     });
+}
+
+private void getBundleIdCategory() {
+        Bundle bundleRe = getArguments();
+        if (bundleRe != null) {
+            categoryId = bundleRe.getString("idCate");
+        }
+
 }
 }

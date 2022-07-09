@@ -15,11 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.youtubeapp.R;
+import com.example.youtubeapp.model.itemrecycleview.SearchItem;
 import com.example.youtubeapp.utiliti.Util;
 import com.example.youtubeapp.api.ApiServicePlayList;
 import com.example.youtubeapp.model.infochannel.Channel;
 import com.example.youtubeapp.model.infochannel.Itemss;
 import com.example.youtubeapp.model.itemrecycleview.VideoItem;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.squareup.picasso.Picasso;
@@ -33,17 +35,19 @@ import retrofit2.Response;
 
 public class BottomSheetDialogDescFragment extends BottomSheetDialogFragment {
     private VideoItem itemV;
+    private SearchItem itemS;
     TextView tvTitleVideoPlay, tvViewCountVideo, tvDatePublicVideo, tvDateYearVideo;
     CircleImageView civLogoChannel;
     TextView tvTitleChannelVideo, tvLikeCountVideo, tvDesc;
     Toolbar tbCancel;
 
-    public static BottomSheetDialogDescFragment newInstance(VideoItem item) {
+    public static BottomSheetDialogDescFragment newInstance(VideoItem item, SearchItem itemS) {
         BottomSheetDialogDescFragment bottomSheetDialogDescFragment =
                 new BottomSheetDialogDescFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Util.BUNDLE_EXTRA_ITEM_VIDEO, item);
+            bundle.putSerializable(Util.BUNDLE_EXTRA_ITEM_VIDEO_SEARCH, itemS);
+            bundle.putSerializable(Util.BUNDLE_EXTRA_ITEM_VIDEO, item);
 
         bottomSheetDialogDescFragment.setArguments(bundle);
 
@@ -55,7 +59,8 @@ public class BottomSheetDialogDescFragment extends BottomSheetDialogFragment {
         super.onCreate(savedInstanceState);
         Bundle bundleReceive = getArguments();
         if (bundleReceive != null) {
-            itemV = (VideoItem) bundleReceive.get(Util.BUNDLE_EXTRA_ITEM_VIDEO);
+            itemV = (VideoItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_ITEM_VIDEO);
+            itemS = (SearchItem) bundleReceive.getSerializable(Util.BUNDLE_EXTRA_ITEM_VIDEO_SEARCH);
         }
 
     }
@@ -76,15 +81,16 @@ public class BottomSheetDialogDescFragment extends BottomSheetDialogFragment {
         int height = displayMetrics.heightPixels;
         int maxHeight = (int) (height*0.65);
 
-//        BottomSheetBehavior bottomSheetBehavior =
-//                BottomSheetBehavior.from(((View) viewDialog.getParent()));
-//        bottomSheetBehavior.setMaxHeight(maxHeight);
-//        bottomSheetBehavior.setPeekHeight(maxHeight);
+        BottomSheetBehavior bottomSheetBehavior =
+                BottomSheetBehavior.from(((View) viewDialog.getParent()));
+        bottomSheetBehavior.setMaxHeight(maxHeight);
+        bottomSheetBehavior.setPeekHeight(maxHeight);
+
         intMain(viewDialog);
         setDataDesc();
         bottomSheetDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
-//        bottomSheetDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        bottomSheetDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         tbCancel.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -146,16 +152,25 @@ public class BottomSheetDialogDescFragment extends BottomSheetDialogFragment {
         tbCancel = view.findViewById(R.id.tb_desc_video);
     }
     private void setDataDesc() {
-        if (itemV == null) {
+        if (itemV == null && itemS == null) {
             return;
+        } else if (itemS != null) {
+            callApiChannel(itemS.getIdChannel());
+            tvTitleVideoPlay.setText(itemS.getTvTitleVideo());
+            tvTitleChannelVideo.setText(itemS.getTitleChannel());
+            tvViewCountVideo.setText(itemS.getViewCountVideo());
+            tvLikeCountVideo.setText(itemS.getLikeCountVideo());
+            getTime(itemS.getPublishAt());
+            tvDesc.setText(itemS.getDescVideo());
+        } else {
+            callApiChannel(itemV.getIdChannel());
+            tvTitleVideoPlay.setText(itemV.getTvTitleVideo());
+            tvTitleChannelVideo.setText(itemV.getTvTitleChannel());
+            tvViewCountVideo.setText(itemV.getViewCountVideo());
+            tvLikeCountVideo.setText(itemV.getLikeCountVideo());
+            getTime(itemV.getPublishAt());
+            tvDesc.setText(itemV.getDescVideo());
         }
-        callApiChannel(itemV.getIdChannel());
-        tvTitleVideoPlay.setText(itemV.getTvTitleVideo());
-        tvTitleChannelVideo.setText(itemV.getTvTitleChannel());
-        tvViewCountVideo.setText(itemV.getViewCountVideo());
-        tvLikeCountVideo.setText(itemV.getLikeCountVideo());
-        getTime(itemV.getPublishAt());
-        tvDesc.setText(itemV.getDescVideo());
     }
 
 }

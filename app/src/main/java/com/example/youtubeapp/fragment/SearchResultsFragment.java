@@ -46,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SearchResultsFragment extends Fragment {
-    String q ;
+    String q;
     String pageToken = "";
     ArrayList<SearchItem> listItems;
     ArrayList<SearchItem> listAdd;
@@ -153,7 +153,8 @@ public class SearchResultsFragment extends Fragment {
 
         return view;
     }
-//  Xóa fragment search để khi quay trở lại thì trở lại trang main
+
+    //  Xóa fragment search để khi quay trở lại thì trở lại trang main
     public void removeSearchFragment() {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         SearchFragment searchFragment
@@ -162,8 +163,9 @@ public class SearchResultsFragment extends Fragment {
             transaction.remove(this);
             transaction.commit();
         }
-    };
+    }
 
+    ;
 
 
     private void setFirstData() {
@@ -189,7 +191,7 @@ public class SearchResultsFragment extends Fragment {
                 callApiSearchResults(pageToken, q, "10");
                 isLoading = false;
             }
-        },1000);
+        }, 1000);
     }
 
     private void callApiSearchResults(String nextPageToken, String q, String maxResults) {
@@ -204,7 +206,7 @@ public class SearchResultsFragment extends Fragment {
             public void onResponse(Call<Search> call, Response<Search> response) {
                 listAdd = new ArrayList<>();
                 String kindType = "", idChannel = "", titleChannel = "", subCount = "",
-                urlLogoChannel = "", tvTitleVideo = "", publishAt = "",
+                        urlLogoChannel = "", tvTitleVideo = "", publishAt = "",
                         viewCountVideo = "", idVideo = "", urlThumbnailsVideo = "",
                         videoCountPlayList = "", idPlayList = "", videoCountChannel = "";
                 Log.d("hahi", response.toString());
@@ -226,6 +228,7 @@ public class SearchResultsFragment extends Fragment {
                             idVideo = listItem.get(i).getId().getVideoId();
                             idChannel = listItem.get(i).getSnippet().getChannelId();
                             callApiViewCountVideo(idVideo, listAdd, i);
+                            callApiChannelId(idChannel, listAdd, i);
                             Log.d("duc1123", idVideo);
                         }
 
@@ -270,6 +273,7 @@ public class SearchResultsFragment extends Fragment {
 
                 }
             }
+
             @Override
             public void onFailure(Call<Search> call, Throwable t) {
 
@@ -291,7 +295,7 @@ public class SearchResultsFragment extends Fragment {
                 DetailVideo video = response.body();
                 if (video != null) {
                     ArrayList<ItemVideo> listItem = video.getItems();
-                    for (int i = 0; i <listItem.size(); i++ ) {
+                    for (int i = 0; i < listItem.size(); i++) {
                         viewCount = listItem.get(0).getStatistics().getViewCount();
                         String likeCount = listItem.get(0).getStatistics().getLikeCount();
                         String commentCount = listItem.get(0).getStatistics().getCommentCount();
@@ -311,7 +315,41 @@ public class SearchResultsFragment extends Fragment {
             }
         });
     }
-//           Api thông tin channel;
+
+    public void callApiChannelId(String idChannel, ArrayList<SearchItem> listItemS, int pos) {
+        ApiServicePlayList.apiServicePlayList.infoChannel(
+                "snippet",
+                null,
+                null,
+                idChannel,
+                Util.API_KEY
+        ).enqueue(new Callback<Channel>() {
+            @Override
+            public void onResponse(Call<Channel> call, Response<Channel> response) {
+                String urlLogoChannel = "";
+                Channel channel = response.body();
+                if (channel != null) {
+                    ArrayList<Itemss> listItem = channel.getItems();
+                    Itemss item = listItem.get(0);
+                    if (item.getSnippet().getThumbnails().getHigh() == null) {
+                        urlLogoChannel = item.getSnippet().getThumbnails().getMedium().getUrl();
+                    } else {
+                        urlLogoChannel = item.getSnippet().getThumbnails().getHigh().getUrl();
+                    }
+                    listItemS.get(pos).setUrlLogoChannel(urlLogoChannel);
+//                    adapter.notifyDataSetChanged();
+                    adapter.notifyItemChanged(pos);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Channel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    //           Api thông tin channel;
     public void callApiChannelFull(String idChannel1, ArrayList<SearchItem> listItemS, int pos) {
         ApiServicePlayList.apiServicePlayList.infoChannelFull(
                 "contentDetails",
@@ -324,7 +362,7 @@ public class SearchResultsFragment extends Fragment {
         ).enqueue(new Callback<Channel>() {
             @Override
             public void onResponse(Call<Channel> call, Response<Channel> response) {
-                String  subCount = "",
+                String subCount = "",
                         videoCount = "";
                 boolean isCheckHideSub = false;
                 Channel channel = response.body();
@@ -342,6 +380,7 @@ public class SearchResultsFragment extends Fragment {
                     listItemS.get(pos).setSubCount(subCount);
                     listItemS.get(pos).setVideoCount(videoCount);
 
+
                     adapter.notifyItemChanged(pos);
                 }
             }
@@ -352,7 +391,8 @@ public class SearchResultsFragment extends Fragment {
             }
         });
     }
-//  Api của play list
+
+    //  Api của play list
     private void callApiPlayList(String idPlayList, ArrayList<SearchItem> listItemS, int pos) {
         ApiServicePlayList.apiServicePlayList.playListChannel(
                 "",
@@ -370,9 +410,9 @@ public class SearchResultsFragment extends Fragment {
 
                 if (playList != null) {
                     ArrayList<Items> listItem = playList.getItems();
-                        videoCount = String.valueOf(listItem.get(0).getContentDetails().getItemCount());
-                        listItemS.get(pos).setVideoCountPlayList(videoCount);
-                        adapter.notifyDataSetChanged();
+                    videoCount = String.valueOf(listItem.get(0).getContentDetails().getItemCount());
+                    listItemS.get(pos).setVideoCountPlayList(videoCount);
+                    adapter.notifyDataSetChanged();
                 }
             }
 

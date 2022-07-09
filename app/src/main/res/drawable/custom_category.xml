@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="50dp"/>
-    <solid android:color="@color/text_cate"/>
-    <padding android:left="@dimen/ms_3dp"
-            android:right="@dimen/ms_3dp"/>
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:state_pressed="false" android:drawable="@drawable/custom_not_click_category"/>
+    <item android:state_pressed="true" android:drawable="@drawable/custom_click_category"/>
+
+</selector>

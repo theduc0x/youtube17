@@ -28,7 +28,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Util {
-    final public static String API_KEY = "AIzaSyDkEdU_hnItFhVO0yDBS758w4FFDIWDuzg";
+    final public static String API_KEY = "AIzaSyDZgG1KiZuVdzIFKRhKcZiVXBQKxfcEkAo";
     final public static String ID_PLAYLIST = "PL8A83124F1D79BD4F";
     final public static String urlListVideoMostPopular = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=statistics&chart=mostPopular&locale=vn&regionCode=vn&key=AIzaSyDkEdU_hnItFhVO0yDBS758w4FFDIWDuzg&maxResults=50";
     public static int REQUEST_CODE_VIDEO = 123;
@@ -38,6 +38,7 @@ public class Util {
     public static String BUNDLE_EXTRA_ITEM_VIDEO_TO_REPLIES = "extra item video replies";
     public static String BUNDLE_EXTRA_ITEM_VIDEO_TO_REPLIES_INSIDE = "extra item video repliess";
     public static String BUNDLE_EXTRA_ITEM_VIDEO = "extra item v video";
+    public static String BUNDLE_EXTRA_ITEM_VIDEO_SEARCH = "extra item v video search";
     public static String BUNDLE_EXTRA_ID_VIDEO = "extra id video";
     public static String BUNDLE_EXTRA_CMT_COUNT_VIDEO = "extra comment count video";
     public static String EXTRA_ID_CHANNEL_TO_CHANNEL = "to channel";

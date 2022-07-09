@@ -47,6 +47,7 @@ public interface ApiServicePlayList {
             @Query("chart") String chart,
             @Query("locale") String locale,
             @Query("regionCode") String regionCode,
+            @Query("videoCategoryId") String categoryId,
             @Query("key") String key,
             @Query("maxResults") String maxResults);
 

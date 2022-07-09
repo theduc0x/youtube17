@@ -39,6 +39,8 @@
                 android:background="@color/bg_edittext"
                 android:layout_marginEnd="@dimen/me_10dp"
                 android:paddingStart="@dimen/padding_10dp"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:hint="@string/title_search"/>
