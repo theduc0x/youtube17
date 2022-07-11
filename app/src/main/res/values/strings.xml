@@ -45,4 +45,6 @@
     <string name="title_search">Search</string>
     <string name="url_image_transparent">https://st.quantrimang.com/photos/image/2020/07/30/Hinh-Nen-Trang-10.jpg</string>
     <string name="tv_name_comment_turnoff">Comments are turned off. Learn more</string>
+    <string name="tv_not_results_search">Try different keywords or remove search filters</string>
+    <string name="tv_no_results">No results found</string>
 </resources>

@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +36,7 @@ import com.example.youtubeapp.model.listplaylistvideochannel.Items;
 import com.example.youtubeapp.model.listplaylistvideochannel.PlayList;
 import com.example.youtubeapp.model.searchyoutube.ItemsSearch;
 import com.example.youtubeapp.model.searchyoutube.Search;
+import com.example.youtubeapp.my_interface.IItemClickFilterSearch;
 import com.example.youtubeapp.my_interface.IItemOnClickChannelListener;
 import com.example.youtubeapp.my_interface.IItemOnClickPlayListSearchListener;
 import com.example.youtubeapp.my_interface.IItemOnClickVideoSearchListener;
@@ -45,7 +49,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchResultsFragment extends Fragment {
+public class SearchResultsFragment extends Fragment implements IItemClickFilterSearch {
     String q;
     String pageToken = "";
     ArrayList<SearchItem> listItems;
@@ -56,6 +60,9 @@ public class SearchResultsFragment extends Fragment {
     MainActivity mainActivity;
     ImageView ivOpenSearch;
     ImageButton ibBack;
+    LinearLayout llNoResults;
+
+    Toolbar tbSearch;
 
     private boolean isLoading;
     private boolean isLastPage;
@@ -68,24 +75,21 @@ public class SearchResultsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_search_results, container, false);
         removeSearchFragment();
         getBundle();
-        ibBack = view.findViewById(R.id.ib_back_search_results);
-        tvSearch = view.findViewById(R.id.tv_search_results);
-        mainActivity = (MainActivity) getActivity();
-        ivOpenSearch = view.findViewById(R.id.iv_open_search_new);
-        tvSearch.setText(q);
-        rvListSearch = view.findViewById(R.id.rv_list_search_results);
+        initView(view);
         LinearLayoutManager linearLayoutManager =
                 new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         rvListSearch.setLayoutManager(linearLayoutManager);
         listItems = new ArrayList<>();
         adapter = new SearchResultsAdapter(new IItemOnClickChannelListener() {
             @Override
+            // Mở channel và truyền dữ liệu sang
             public void onClickOpenChannel(String idChannel, String titleChannel) {
                 Intent openToChannel = new Intent(getActivity(), ChannelActivity.class);
                 openToChannel.putExtra(Util.EXTRA_ID_CHANNEL_TO_CHANNEL, idChannel);
                 openToChannel.putExtra(Util.EXTRA_TITLE_CHANNEL_TO_CHANNEL, titleChannel);
                 startActivity(openToChannel);
             }
+            // Mở play list
         }, new IItemOnClickPlayListSearchListener() {
             @Override
             public void onCLickItemPlayListS(SearchItem item) {
@@ -96,6 +100,7 @@ public class SearchResultsFragment extends Fragment {
                 openToChannel.putExtras(bundle);
                 startActivity(openToChannel);
             }
+            // Xem video
         }, new IItemOnClickVideoSearchListener() {
             @Override
             public void OnClickItemVideoS(SearchItem item) {
@@ -150,7 +155,8 @@ public class SearchResultsFragment extends Fragment {
                 mainActivity.onBackPressed();
             }
         });
-
+        // sự kiện click toolbar filter
+        tbFilter();
         return view;
     }
 
@@ -164,13 +170,12 @@ public class SearchResultsFragment extends Fragment {
             transaction.commit();
         }
     }
-
-    ;
-
-
+    // Xét dữ liệu khi load lần đầu
     private void setFirstData() {
         listItems = null;
-        callApiSearchResults(pageToken, q, "20");
+        callApiSearchResults(pageToken, q, "20",  null, null,
+                null, null, null, null,
+                null, null, null, null);
     }
 
     // Set propress bar load data
@@ -188,17 +193,33 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public void run() {
                 Toast.makeText(getContext(), "Load Page" + currenPage, Toast.LENGTH_SHORT).show();
-                callApiSearchResults(pageToken, q, "10");
+                callApiSearchResults(pageToken, q, "10", null, null,
+                        null, null, null, null,
+                        null, null, null, null);
                 isLoading = false;
             }
         }, 1000);
     }
 
-    private void callApiSearchResults(String nextPageToken, String q, String maxResults) {
+    private void callApiSearchResults(String nextPageToken, String q, String maxResults,
+                                      String order, String publishedAfter, String regionCode,
+                                      String type, String videoCaption, String videoDefinition,
+                                      String videoDimension, String videoDuration,
+                                      String videoLicense, String videoType) {
         ApiServicePlayList.apiServicePlayList.searchList(
                 nextPageToken,
                 "snippet",
+                order,
+                publishedAfter,
                 q,
+                regionCode,
+                type,
+                videoCaption,
+                videoDefinition,
+                videoDimension,
+                videoDuration,
+                videoLicense,
+                videoType,
                 Util.API_KEY,
                 maxResults
         ).enqueue(new Callback<Search>() {
@@ -215,50 +236,52 @@ public class SearchResultsFragment extends Fragment {
                 if (search != null) {
                     pageToken = search.getNextPageToken();
                     ArrayList<ItemsSearch> listItem = search.getItems();
-                    for (int i = 0; i < listItem.size(); i++) {
-                        kindType = listItem.get(i).getId().getKind();
-                        if (kindType.equals("youtube#channel")) {
-                            idChannel = listItem.get(i).getId().getChannelId();
-                            callApiChannelFull(idChannel, listAdd, i);
-                        } else if (kindType.equals("youtube#playlist")) {
-                            idPlayList = listItem.get(i).getId().getPlaylistId();
-                            idChannel = listItem.get(i).getSnippet().getChannelId();
-                            callApiPlayList(idPlayList, listAdd, i);
-                        } else if (kindType.equals("youtube#video")) {
-                            idVideo = listItem.get(i).getId().getVideoId();
-                            idChannel = listItem.get(i).getSnippet().getChannelId();
-                            callApiViewCountVideo(idVideo, listAdd, i);
-                            callApiChannelId(idChannel, listAdd, i);
-                            Log.d("duc1123", idVideo);
-                        }
+                    // Nếu listItem.size = 0 tương ứng với không có kết quả thì ta hiện no results lên
+                        if (listItem.size() == 0) llNoResults.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < listItem.size(); i++) {
+                            kindType = listItem.get(i).getId().getKind();
+                            if (kindType.equals("youtube#channel")) {
+                                idChannel = listItem.get(i).getId().getChannelId();
+                                callApiChannelFull(idChannel, listAdd, i);
+                            } else if (kindType.equals("youtube#playlist")) {
+                                idPlayList = listItem.get(i).getId().getPlaylistId();
+                                idChannel = listItem.get(i).getSnippet().getChannelId();
+                                callApiPlayList(idPlayList, listAdd, i);
+                            } else if (kindType.equals("youtube#video")) {
+                                idVideo = listItem.get(i).getId().getVideoId();
+                                idChannel = listItem.get(i).getSnippet().getChannelId();
+                                callApiViewCountVideo(idVideo, listAdd, i);
+                                callApiChannelId(idChannel, listAdd, i);
+                                Log.d("duc1123", idVideo);
+                            }
 
-                        titleChannel = listItem.get(i).getSnippet().getChannelTitle();
-                        urlLogoChannel = listItem.get(i).getSnippet().getThumbnails().getHigh().getUrl();
-                        if (listItem.get(i).getSnippet().getThumbnails().getMaxres() != null) {
-                            urlLogoChannel = listItem.get(i).getSnippet().getThumbnails()
-                                    .getMaxres().getUrl();
-                            urlThumbnailsVideo = listItem.get(i).getSnippet().getThumbnails()
-                                    .getMaxres().getUrl();
-                        } else if (listItem.get(i).getSnippet().getThumbnails().getStandard() != null) {
-                            urlLogoChannel = listItem.get(i).getSnippet().getThumbnails()
-                                    .getStandard().getUrl();
-                            urlThumbnailsVideo = listItem.get(i).getSnippet().getThumbnails()
-                                    .getStandard().getUrl();
-                        } else {
-                            urlLogoChannel = listItem.get(i).getSnippet().getThumbnails()
-                                    .getHigh().getUrl();
-                            urlThumbnailsVideo = listItem.get(i).getSnippet().getThumbnails()
-                                    .getHigh().getUrl();
-                        }
-                        tvTitleVideo = listItem.get(i).getSnippet().getTitle();
-                        publishAt = listItem.get(i).getSnippet().getPublishedAt();
+                            titleChannel = listItem.get(i).getSnippet().getChannelTitle();
+                            urlLogoChannel = listItem.get(i).getSnippet().getThumbnails().getHigh().getUrl();
+                            if (listItem.get(i).getSnippet().getThumbnails().getMaxres() != null) {
+                                urlLogoChannel = listItem.get(i).getSnippet().getThumbnails()
+                                        .getMaxres().getUrl();
+                                urlThumbnailsVideo = listItem.get(i).getSnippet().getThumbnails()
+                                        .getMaxres().getUrl();
+                            } else if (listItem.get(i).getSnippet().getThumbnails().getStandard() != null) {
+                                urlLogoChannel = listItem.get(i).getSnippet().getThumbnails()
+                                        .getStandard().getUrl();
+                                urlThumbnailsVideo = listItem.get(i).getSnippet().getThumbnails()
+                                        .getStandard().getUrl();
+                            } else {
+                                urlLogoChannel = listItem.get(i).getSnippet().getThumbnails()
+                                        .getHigh().getUrl();
+                                urlThumbnailsVideo = listItem.get(i).getSnippet().getThumbnails()
+                                        .getHigh().getUrl();
+                            }
+                            tvTitleVideo = listItem.get(i).getSnippet().getTitle();
+                            publishAt = listItem.get(i).getSnippet().getPublishedAt();
 
-                        listAdd.add(new SearchItem(
-                                kindType, idChannel, titleChannel, subCount, videoCountChannel,
-                                urlLogoChannel, tvTitleVideo, publishAt, viewCountVideo, idVideo,
-                                "", "", "", urlThumbnailsVideo,
-                                videoCountPlayList, idPlayList
-                        ));
+                            listAdd.add(new SearchItem(
+                                    kindType, idChannel, titleChannel, subCount, videoCountChannel,
+                                    urlLogoChannel, tvTitleVideo, publishAt, viewCountVideo, idVideo,
+                                    "", "", "", urlThumbnailsVideo,
+                                    videoCountPlayList, idPlayList
+                            ));
                     }
                     if (listItems == null) {
                         listItems = listAdd;
@@ -271,6 +294,8 @@ public class SearchResultsFragment extends Fragment {
                         setProgressBar();
                     }
 
+                } else {
+                    llNoResults.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -281,7 +306,7 @@ public class SearchResultsFragment extends Fragment {
         });
 
     }
-
+    // Một vài dữ liệu thiếu của video là viewCount, likeCount,...
     private void callApiViewCountVideo(String idVideo, ArrayList<SearchItem> item, int pos) {
         ApiServicePlayList.apiServicePlayList.detailVideo(
                 "snippet",
@@ -315,7 +340,7 @@ public class SearchResultsFragment extends Fragment {
             }
         });
     }
-
+    // Lấy logo channel
     public void callApiChannelId(String idChannel, ArrayList<SearchItem> listItemS, int pos) {
         ApiServicePlayList.apiServicePlayList.infoChannel(
                 "snippet",
@@ -423,10 +448,57 @@ public class SearchResultsFragment extends Fragment {
         });
     }
 
+    // Bắt sự kiện toolbar
+    private void tbFilter() {
+        tbSearch.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.mn_more_search:
+                        openBottomSheetSearchFilter();
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void openBottomSheetSearchFilter() {
+        BottomSheetDialogSearchSelect searchFilterFragment =
+                BottomSheetDialogSearchSelect.newInstance(this);
+        searchFilterFragment.show(getChildFragmentManager(), searchFilterFragment.getTag());
+    }
+
+    // Nhận dữ liệu q là nội dung muốn tìm
     private void getBundle() {
         Bundle bundleRe = getArguments();
         if (bundleRe != null) {
             q = bundleRe.getString(Util.BUNDLE_EXTRA_Q, "");
         }
+    }
+
+    private void initView(View view) {
+        tbSearch = view.findViewById(R.id.tb_nav_search_results);
+        ibBack = view.findViewById(R.id.ib_back_search_results);
+        tvSearch = view.findViewById(R.id.tv_search_results);
+        mainActivity = (MainActivity) getActivity();
+        ivOpenSearch = view.findViewById(R.id.iv_open_search_new);
+        tvSearch.setText(q);
+        rvListSearch = view.findViewById(R.id.rv_list_search_results);
+        llNoResults = view.findViewById(R.id.ll_no_results_search);
+    }
+
+    @Override
+    public void onClickSearchFilter(String order, String type, String publishedAfter, String duration, String videoType) {
+        llNoResults.setVisibility(View.GONE);
+        currenPage = 1;
+        if (listItems != null) {
+            listItems.clear();
+        }
+        listItems = null;
+        adapter.notifyDataSetChanged();
+        callApiSearchResults("", q, "20",  order, publishedAfter,
+                null, type, null, null,
+                null, duration, null, videoType);
     }
 }

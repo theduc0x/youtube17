@@ -114,7 +114,6 @@ public class ShortsVideoAdapter extends RecyclerView.Adapter<ShortsVideoAdapter.
 //            youTubePlayerFragment =
 //                    (YouTubePlayerFragment) ((AppCompatActivity) context)
 //                            .getFragmentManager().findFragmentById(R.id.fm_shorts);
-//            flShorts = itemView.findViewById(R.id.fl_shorts);
             ypvShort = itemView.findViewById(R.id.ypv_shorts);
             tvLike = itemView.findViewById(R.id.tv_like_count_shorts);
             tvCmtCount = itemView.findViewById(R.id.tv_comment_count_shorts);

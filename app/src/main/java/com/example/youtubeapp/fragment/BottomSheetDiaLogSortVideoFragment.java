@@ -47,19 +47,7 @@ public class BottomSheetDiaLogSortVideoFragment extends BottomSheetDialogFragmen
         View viewDialog = LayoutInflater.from(getContext()).inflate(
                 R.layout.fragment_botton_sheet_dia_log_sort_video, null);
         bottomSheetDialog.setContentView(viewDialog);
-//        bottomSheetDialog.setCanceledOnTouchOutside(false);
-        // lấy chiều cao màn hình activity chứa
-//        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-//        int width = displayMetrics.widthPixels;
-//        int height = displayMetrics.heightPixels;
-//        int maxHeight = (int) (height*0.65);
 
-//        BottomSheetBehavior bottomSheetBehavior =
-//                BottomSheetBehavior.from(((View) viewDialog.getParent()));
-//        bottomSheetBehavior.setMaxHeight(maxHeight);
-//        bottomSheetBehavior.setPeekHeight(maxHeight);
-//        intMain(viewDialog);
-//        setDataDesc();
         initView(viewDialog);
         if (Util.REQUEST_CODE_SORT_VIDEO == 111) {
             ivSortDate.setVisibility(View.VISIBLE);

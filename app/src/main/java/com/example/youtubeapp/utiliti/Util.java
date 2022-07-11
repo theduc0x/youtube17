@@ -19,7 +19,11 @@ import com.example.youtubeapp.model.listcomment.RepliesComment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -28,7 +32,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Util {
-    final public static String API_KEY = "AIzaSyDZgG1KiZuVdzIFKRhKcZiVXBQKxfcEkAo";
+    final public static String API_KEY = "AIzaSyDMV8e1aPB63Xwgi506dtDyzf6PrlQWCrw";
     final public static String ID_PLAYLIST = "PL8A83124F1D79BD4F";
     final public static String urlListVideoMostPopular = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=statistics&chart=mostPopular&locale=vn&regionCode=vn&key=AIzaSyDkEdU_hnItFhVO0yDBS758w4FFDIWDuzg&maxResults=50";
     public static int REQUEST_CODE_VIDEO = 123;
@@ -49,13 +53,17 @@ public class Util {
     public static String BUNDLE_EXTRA_Q = "extra q";
     public static String EXTRA_KEY_ITEM_PLAYLIST = "key playlist";
     public static String EXTRA_KEY_ITEM_VIDEO = "key video";
-//    public static ArrayList<VideoItem> listVideoItem = null;
-//    public static ArrayList<CommentItem> listCmtItem = null;
+    public static int SECONDS_IN_1_HOUR = 3600;
+    public static int SECONDS_IN_1_DAY = 86400;
+    public static int SECONDS_IN_1_WEEK = 604800;
+    public static int SECONDS_IN_1_MONTH = 2592000;
+    public static int SECONDS_IN_1_YEAR = 31104000;
+
 
     public static String nextPageToken = "";
 
     public static final int VIEW_TYPE_ITEM = 0, VIEW_TYPE_LOADING = 1;
-
+//  Chuyển đổi từ lượt view double sang K và M
     public static String convertViewCount(double viewCount) {
         double view;
         if (viewCount < 1000) {
@@ -69,7 +77,7 @@ public class Util {
         }
         return "";
     }
-
+//  Trả về time cho giống youtube
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String getTime(String dateOne) {
         String days = "";
@@ -87,11 +95,11 @@ public class Util {
         if (getDiff >= 0 && getDiff < 60) {
             days = getDiff + " second ago";
 
-        } else if (getDiff >= 60 && getDiff < 3600) {
+        } else if (getDiff >= 60 && getDiff < SECONDS_IN_1_HOUR) {
             s = (int) (getDiff / 60);
             days = s + " min ago";
 
-        } else if (getDiff >= 3600 && getDiff < 86400) {
+        } else if (getDiff >= SECONDS_IN_1_HOUR && getDiff < SECONDS_IN_1_DAY) {
             s = (int) getDiff / (60 * 60);
             days = s + " hour ago";
 
@@ -114,6 +122,19 @@ public class Util {
             }
         }
         return days;
+    }
+//  Số ngày bắt đầu tìm kiếm trong youtube
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static String getTimeFilter(int s) {
+
+        ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+        long secondsDate = currentDate.toEpochSecond();
+
+        Instant dateInstant = Instant.ofEpochSecond(secondsDate - s);
+
+        ZonedDateTime dateRequest = ZonedDateTime.ofInstant(dateInstant, ZoneOffset.UTC);
+
+        return dateRequest.toString();
     }
 
 }

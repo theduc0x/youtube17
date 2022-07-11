@@ -157,16 +157,17 @@ public interface ApiServicePlayList {
     Call<Search> searchList(
             @Query("pageToken") String pageToken,
             @Query("part") String part,
+            @Query("order") String order,
+            @Query("publishedAfter") String publishedAfter,
             @Query("q") String q,
-            @Query("key") String key,
-            @Query("maxResults") String maxResults);
-
-    // Search list shorts video
-    @GET("youtube/v3/search")
-    Call<Search> searchListShorts(
-            @Query("pageToken") String pageToken,
-            @Query("part") String part,
-            @Query("q") String q,
+            @Query("regionCode") String regionCode,
+            @Query("type") String type,
+            @Query("videoCaption") String videoCaption,
+            @Query("videoDefinition") String videoDefinition,
+            @Query("videoDimension") String videoDimension,
+            @Query("videoDuration") String videoDuration,
+            @Query("videoLicense") String videoLicense,
+            @Query("videoType") String videoType,
             @Query("key") String key,
             @Query("maxResults") String maxResults);
 
